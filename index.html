@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -13,33 +14,36 @@
         }
 
         body {
-            font-family: 'Microsoft YaHei', 'Consolas', monospace;
-            background-color: #f5f5f5;
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'Consolas', monospace;
+            background-color: #f8f9fa;
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            color: #333;
         }
 
         /* 顶部导航栏 */
         .header {
-            background: #fff;
+            background: #ffffff;
             padding: 15px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            border-bottom: 1px solid #eaeaea;
         }
 
         .header h1 {
-            font-size: 24px;
-            color: #333;
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: 500;
         }
 
         .header-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
         }
 
@@ -47,7 +51,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-right: 20px;
+            margin-right: 10px;
         }
 
         .mode-switch label {
@@ -57,25 +61,30 @@
 
         .btn {
             padding: 8px 16px;
-            background: #4CAF50;
+            background: #4361ee;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
         }
 
         .btn:hover {
-            background: #45a049;
+            background: #3a56e4;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
         }
 
         .btn-secondary {
-            background: #2196F3;
+            background: #6c757d;
+            box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
         }
 
         .btn-secondary:hover {
-            background: #1976D2;
+            background: #5a6268;
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
         }
 
         /* 主要内容区域 */
@@ -98,14 +107,15 @@
         /* 文章显示区 */
         .article-display {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             height: 240px;
             overflow-y: auto;
             font-size: 18px;
             line-height: 1.8;
             letter-spacing: 0.5px;
+            border: 1px solid #eaeaea;
         }
 
         .article-content {
@@ -119,24 +129,29 @@
             position: relative;
             display: inline-block;
             min-width: 0.5em;
+            transition: background-color 0.1s ease;
         }
 
         .char.correct {
-            background-color: #c8e6c9;
+            background-color: #e8f5e9;
             color: #2e7d32;
+            border-radius: 2px;
         }
 
         .char.incorrect {
-            background-color: #ffcdd2;
+            background-color: #ffebee;
             color: #c62828;
+            border-radius: 2px;
+            text-decoration: underline;
         }
 
         /* 输入区 */
         .input-area {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
         }
 
         .typing-input {
@@ -145,16 +160,18 @@
             padding: 15px;
             font-size: 18px;
             font-family: 'Consolas', 'Courier New', monospace;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             resize: none;
             line-height: 1.8;
             letter-spacing: 0.5px;
+            transition: border-color 0.2s ease;
         }
 
         .typing-input:focus {
             outline: none;
-            border-color: #4CAF50;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         /* 右侧统计面板 */
@@ -169,19 +186,21 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
         }
 
         .stat-card h3 {
             margin-bottom: 10px;
             color: #666;
             font-size: 16px;
+            font-weight: 500;
         }
 
         .stat-value {
             font-size: 32px;
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
         .stat-unit {
@@ -200,10 +219,11 @@
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 1000;
             max-width: 500px;
             width: 90%;
+            border: 1px solid #eaeaea;
         }
 
         .result-modal.show {
@@ -217,7 +237,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3);
             z-index: 999;
         }
 
@@ -235,10 +255,11 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 1000;
             width: 600px;
             max-width: 90%;
+            border: 1px solid #eaeaea;
         }
 
         .load-text-modal.show {
@@ -247,16 +268,26 @@
 
         .load-text-modal h3 {
             margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 500;
         }
 
         .load-text-modal textarea {
             width: 100%;
             height: 300px;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             resize: vertical;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.5;
+        }
+
+        .load-text-modal textarea:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .load-text-modal .btn-group {
@@ -295,9 +326,9 @@
                 </select>
             </div>
             <select id="articleSelect" class="btn btn-secondary">
-                <option value="0">文章1：程序员的自我修养</option>
-                <option value="1">文章2：春天的故事</option>
-                <option value="2">文章3：技术改变世界</option>
+                <option value="0">文章1</option>
+                <option value="1">文章2</option>
+                <option value="2">文章3</option>
             </select>
             <button class="btn" onclick="showLoadTextModal()">载文</button>
             <button class="btn btn-secondary" onclick="resetPractice()">重新开始</button>
@@ -383,12 +414,19 @@
 
     <script>
         // ========== 全局变量定义 ==========
-        const articles = [
+        const chineseArticles = [
             `编程是一门艺术，它不仅仅是敲击键盘写代码那么简单。一个优秀的程序员需要具备逻辑思维、创造力和解决问题的能力。在这个快速发展的时代，技术日新月异，我们必须保持学习的热情，不断提升自己的技能。代码质量的好坏直接影响到软件的稳定性和可维护性。因此，我们应该养成良好的编程习惯，写出简洁、高效、易读的代码。同时，团队合作也是软件开发中不可或缺的一部分。通过代码审查、知识分享和技术讨论，我们可以共同进步，创造出更好的产品。`,
             `春天来了，万物复苏。公园里的花朵竞相绽放，红的、黄的、粉的，五彩缤纷，美不胜收。微风轻拂，带来阵阵花香，让人心旷神怡。孩子们在草地上奔跑嬉戏，欢声笑语回荡在空中。老人们坐在长椅上晒太阳，享受着这温暖的时光。小鸟在枝头欢快地歌唱，仿佛在庆祝这美好的季节。湖水波光粼粼，倒映着蓝天白云，构成一幅动人的画卷。这就是春天，充满生机与希望的季节。`,
             `科技改变生活，创新引领未来。从智能手机到人工智能，从互联网到物联网，技术的发展深刻地改变着我们的生活方式。在线教育让知识传播更加便捷，远程医疗让看病就医更加方便，电子商务让购物更加轻松。5G技术的普及将带来更快的网速和更低的延迟，为自动驾驶、虚拟现实等新技术的应用奠定基础。区块链技术保障了数据的安全性和透明性，量子计算将突破传统计算的极限。让我们拥抱科技，共创美好未来。`
         ];
 
+        const englishArticles = [
+            `Technology has transformed the way we live, work, and communicate. From smartphones to artificial intelligence, innovations continue to reshape our daily experiences. The internet has connected people across the globe, breaking down geographical barriers and enabling instant communication. Social media platforms have revolutionized how we share information and maintain relationships. As we move forward, emerging technologies like virtual reality, blockchain, and quantum computing promise to bring even more dramatic changes. However, with these advancements come new challenges regarding privacy, security, and ethical considerations. It is crucial that we embrace innovation while remaining mindful of its impact on society and individuals.`,
+            `Learning a new language opens doors to countless opportunities and experiences. It enhances cognitive abilities, improves memory, and increases cultural awareness. When we study a foreign language, we gain insights into different ways of thinking and expressing ideas. This process challenges our brains and helps develop problem-solving skills. Moreover, being multilingual in today's globalized world provides significant career advantages. It enables better communication with international colleagues and clients, making us more valuable in the job market. The journey of language learning may be challenging, but the rewards are immeasurable. Every new word learned is a step toward broader horizons and deeper understanding.`,
+            `The importance of environmental conservation cannot be overstated in our modern world. Climate change poses significant threats to ecosystems, wildlife, and human communities worldwide. We must take immediate action to reduce carbon emissions, protect natural habitats, and promote sustainable practices. Simple daily choices, such as recycling, using renewable energy, and reducing water consumption, can make a meaningful difference. Governments, businesses, and individuals must work together to create lasting solutions. Education plays a vital role in raising awareness and inspiring action. By teaching future generations about environmental responsibility, we can ensure a healthier planet for years to come. The time for change is now.`
+        ];
+
+        let articles = englishArticles; // 当前使用的文章集
         let currentArticle = '';
         let processedArticle = ''; // 处理后的文章（中文模式下去除空格）
         let currentIndex = 0;
@@ -440,7 +478,35 @@
         // ========== 模式切换处理 ==========
         function handleModeChange() {
             inputMode = document.getElementById('inputMode').value;
-            resetPractice();
+            
+            // 切换文章集
+            if (inputMode === 'english') {
+                articles = englishArticles;
+            } else {
+                articles = chineseArticles;
+            }
+            
+            // 更新文章选择器选项
+            updateArticleSelectOptions();
+            
+            // 加载第一篇文章
+            loadArticle(0);
+        }
+
+        // 更新文章选择器的选项文本
+        function updateArticleSelectOptions() {
+            const articleSelect = document.getElementById('articleSelect');
+            const options = articleSelect.options;
+            
+            if (inputMode === 'english') {
+                options[0].text = '文章1：Technology and Life';
+                options[1].text = '文章2：Language Learning';
+                options[2].text = '文章3：Environmental Conservation';
+            } else {
+                options[0].text = '文章1：程序员的自我修养';
+                options[1].text = '文章2：春天的故事';
+                options[2].text = '文章3：技术改变世界';
+            }
         }
 
         // ========== 文章处理函数 ==========
@@ -448,8 +514,10 @@
             if (inputMode === 'chinese') {
                 // 中文模式：去除所有空格
                 return text.replace(/\s+/g, '');
+            } else {
+                // 英文模式：去除逗号、句号后与下一句之间的空格，保留单词间的空格
+                return text.replace(/([,.])\s+/g, '$1');
             }
-            return text;
         }
 
         // 过滤输入内容（中文模式下过滤英文字母）
@@ -716,3 +784,4 @@
     </script>
 </body>
 </html>
+```
