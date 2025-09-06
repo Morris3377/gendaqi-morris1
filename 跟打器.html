@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线跟打器</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Consolas', monospace;
+            background-color: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+
+        /* 主要内容区域 */
+        .main-container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        /* 左侧练习区域 */
+        .practice-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 文章显示区 */
+        .article-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 240px;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        .article-content {
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* 字符样式 - 移除了current样式 */
+        .char {
+            position: relative;
+            display: inline-block;
+            min-width: 0.5em;
+        }
+
+        .char.correct {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .char.incorrect {
+            background-color: #ffcdd2;
+            color: #c62828;
+        }
+
+        /* 输入区 */
+        .input-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .typing-input {
+            width: 100%;
+            height: 240px;
+            padding: 15px;
+            font-size: 18px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        .typing-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        /* 右侧统计面板 */
+        .stats-panel {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-unit {
+            font-size: 14px;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        /* 结果显示 */
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .result-modal.show {
+            display: block;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .modal-overlay.show {
+            display: block;
+        }
+
+        /* 载文模态框 */
+        .load-text-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            width: 600px;
+            max-width: 90%;
+        }
+
+        .load-text-modal.show {
+            display: block;
+        }
+
+        .load-text-modal h3 {
+            margin-bottom: 20px;
+        }
+
+        .load-text-modal textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        .load-text-modal .btn-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .stats-panel {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            .stat-card {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <div class="header">
+        <h1>在线跟打器</h1>
+        <div class="header-buttons">
+            <select id="articleSelect" class="btn btn-secondary">
+                <option value="0">文章1：程序员的自我修养</option>
+                <option value="1">文章2：春天的故事</option>
+                <option value="2">文章3：技术改变世界</option>
+            </select>
+            <button class="btn" onclick="showLoadTextModal()">载文</button>
+            <button class="btn btn-secondary" onclick="resetPractice()">重新开始</button>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-container">
+        <!-- 左侧练习区 -->
+        <div class="practice-area">
+            <!-- 文章显示区 -->
+            <div class="article-display">
+                <div class="article-content" id="articleContent"></div>
+            </div>
+            
+            <!-- 输入区 -->
+            <div class="input-area">
+                <textarea class="typing-input" id="typingInput" 
+                    placeholder="点击这里开始输入..."
+                    onfocus="handleInputFocus()"
+                    onblur="handleInputBlur()"></textarea>
+            </div>
+        </div>
+
+        <!-- 右侧统计面板 -->
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h3>速度</h3>
+                <div>
+                    <span class="stat-value" id="speed">0</span>
+                    <span class="stat-unit">字/分</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>准确率</h3>
+                <div>
+                    <span class="stat-value" id="accuracy">100</span>
+                    <span class="stat-unit">%</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>用时</h3>
+                <div>
+                    <span class="stat-value" id="timer">00:00</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>进度</h3>
+                <div>
+                    <span id="correctChars">0</span> / 
+                    <span id="totalChars">0</span> 字
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果模态框 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="hideResultModal()"></div>
+    <div class="result-modal" id="resultModal">
+        <h2>练习完成！</h2>
+        <div style="margin-top: 20px;">
+            <p>速度：<strong id="finalSpeed">0</strong> 字/分</p>
+            <p>准确率：<strong id="finalAccuracy">0</strong>%</p>
+            <p>正确字数：<strong id="finalCorrect">0</strong> 字</p>
+            <p>错误字数：<strong id="finalErrors">0</strong> 字</p>
+            <p>总用时：<strong id="finalTime">00:00</strong></p>
+        </div>
+        <button class="btn" style="margin-top: 20px; width: 100%;" onclick="hideResultModal()">关闭</button>
+    </div>
+
+    <!-- 载文模态框 -->
+    <div class="load-text-modal" id="loadTextModal">
+        <h3>载入文章</h3>
+        <textarea id="customTextInput" placeholder="请输入或粘贴文章内容..."></textarea>
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="hideLoadTextModal()">取消</button>
+            <button class="btn" onclick="loadCustomText()">确定</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== 全局变量定义 ==========
+        const articles = [
+            `编程是一门艺术，它不仅仅是敲击键盘写代码那么简单。一个优秀的程序员需要具备逻辑思维、创造力和解决问题的能力。在这个快速发展的时代，技术日新月异，我们必须保持学习的热情，不断提升自己的技能。代码质量的好坏直接影响到软件的稳定性和可维护性。因此，我们应该养成良好的编程习惯，写出简洁、高效、易读的代码。同时，团队合作也是软件开发中不可或缺的一部分。通过代码审查、知识分享和技术讨论，我们可以共同进步，创造出更好的产品。`,
+            `春天来了，万物复苏。公园里的花朵竞相绽放，红的、黄的、粉的，五彩缤纷，美不胜收。微风轻拂，带来阵阵花香，让人心旷神怡。孩子们在草地上奔跑嬉戏，欢声笑语回荡在空中。老人们坐在长椅上晒太阳，享受着这温暖的时光。小鸟在枝头欢快地歌唱，仿佛在庆祝这美好的季节。湖水波光粼粼，倒映着蓝天白云，构成一幅动人的画卷。这就是春天，充满生机与希望的季节。`,
+            `科技改变生活，创新引领未来。从智能手机到人工智能，从互联网到物联网，技术的发展深刻地改变着我们的生活方式。在线教育让知识传播更加便捷，远程医疗让看病就医更加方便，电子商务让购物更加轻松。5G技术的普及将带来更快的网速和更低的延迟，为自动驾驶、虚拟现实等新技术的应用奠定基础。区块链技术保障了数据的安全性和透明性，量子计算将突破传统计算的极限。让我们拥抱科技，共创美好未来。`
+        ];
+
+        let currentArticle = '';
+        let currentIndex = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let isPaused = true;
+        let correctCount = 0;
+        let errorCount = 0;
+        let displayOffset = 0;
+        const LINES_PER_PAGE = 7;
+        const CHARS_PER_LINE = 35;
+
+        // ========== 初始化函数 ==========
+        function init() {
+            // 加载默认文章
+            loadArticle(0);
+            
+            // 绑定输入事件
+            const input = document.getElementById('typingInput');
+            input.addEventListener('input', handleInput);
+            
+            // 绑定文章选择事件
+            document.getElementById('articleSelect').addEventListener('change', (e) => {
+                loadArticle(parseInt(e.target.value));
+            });
+            
+            // 绑定Alt+E快捷键
+            document.addEventListener('keydown', async (e) => {
+                if (e.altKey && e.key === 'e') {
+                    e.preventDefault();
+                    await pasteFromClipboard();
+                }
+            });
+        }
+
+        // ========== 文章加载与显示 ==========
+        function loadArticle(index) {
+            currentArticle = articles[index];
+            resetPractice();
+        }
+
+        function loadCustomArticle(text) {
+            currentArticle = text.trim();
+            resetPractice();
+        }
+
+        // 渲染文章内容 - 移除了current字符的高亮
+        function renderArticle() {
+            const container = document.getElementById('articleContent');
+            container.innerHTML = '';
+            
+            const startIndex = displayOffset;
+            const endIndex = Math.min(startIndex + LINES_PER_PAGE * CHARS_PER_LINE, currentArticle.length);
+            
+            for (let i = 0; i < currentArticle.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = currentArticle[i];
+                
+                if (i < currentIndex) {
+                    const inputChar = document.getElementById('typingInput').value[i];
+                    if (inputChar === currentArticle[i]) {
+                        span.classList.add('correct');
+                    } else {
+                        span.classList.add('incorrect');
+                    }
+                }
+                // 移除了 else if (i === currentIndex) 的判断，不再添加current类
+                
+                // 只显示当前页的字符
+                if (i >= startIndex && i < endIndex) {
+                    container.appendChild(span);
+                }
+            }
+            
+            // 更新统计信息
+            document.getElementById('totalChars').textContent = currentArticle.length;
+        }
+
+        // ========== 输入处理 ==========
+        function handleInput(e) {
+            const input = e.target.value;
+            const inputLength = input.length;
+            
+            // 第一次输入开始计时
+            if (!startTime && inputLength > 0) {
+                startTimer();
+            }
+            
+            // 更新当前索引
+            currentIndex = inputLength;
+            
+            // 检查是否需要翻页
+            const currentPage = Math.floor(currentIndex / (LINES_PER_PAGE * CHARS_PER_LINE));
+            const newOffset = currentPage * LINES_PER_PAGE * CHARS_PER_LINE;
+            if (newOffset !== displayOffset) {
+                displayOffset = newOffset;
+            }
+            
+            // 统计正确和错误字符
+            correctCount = 0;
+            errorCount = 0;
+            
+            for (let i = 0; i < inputLength && i < currentArticle.length; i++) {
+                if (input[i] === currentArticle[i]) {
+                    correctCount++;
+                } else {
+                    errorCount++;
+                }
+            }
+            
+            // 更新显示
+            renderArticle();
+            updateStats();
+            
+            // 检查是否完成
+            if (inputLength >= currentArticle.length) {
+                endPractice();
+            }
+        }
+
+        function handleInputFocus() {
+            if (timerInterval && isPaused) {
+                isPaused = false;
+            }
+        }
+
+        function handleInputBlur() {
+            if (timerInterval && !isPaused) {
+                isPaused = true;
+            }
+        }
+
+        // ========== 计时器功能 ==========
+        function startTimer() {
+            startTime = Date.now();
+            isPaused = false;
+            
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    updateTimer();
+                    updateStats();
+                }
+            }, 100);
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // ========== 统计更新 ==========
+        function updateStats() {
+            // 更新进度
+            document.getElementById('correctChars').textContent = correctCount;
+            
+            // 计算并更新速度（CPM）
+            if (startTime && currentIndex > 0) {
+                const elapsedMinutes = (Date.now() - startTime) / 60000;
+                const cpm = Math.round(currentIndex / elapsedMinutes);
+                document.getElementById('speed').textContent = cpm;
+            }
+            
+            // 计算并更新准确率
+            if (currentIndex > 0) {
+                const accuracy = Math.round((correctCount / currentIndex) * 100);
+                document.getElementById('accuracy').textContent = accuracy;
+            }
+        }
+
+        // ========== 练习控制 ==========
+        function resetPractice() {
+            // 停止计时器
+            stopTimer();
+            
+            // 重置变量
+            currentIndex = 0;
+            startTime = null;
+            isPaused = true;
+            correctCount = 0;
+            errorCount = 0;
+            displayOffset = 0;
+            
+            // 清空输入
+            document.getElementById('typingInput').value = '';
+            document.getElementById('typingInput').focus();
+            
+            // 重置统计显示
+            document.getElementById('speed').textContent = '0';
+            document.getElementById('accuracy').textContent = '100';
+            document.getElementById('timer').textContent = '00:00';
+            document.getElementById('correctChars').textContent = '0';
+            
+            // 重新渲染文章
+            renderArticle();
+        }
+
+        function endPractice() {
+            // 停止计时器
+            stopTimer();
+            
+            // 计算最终统计数据
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            const elapsedMinutes = elapsedSeconds / 60;
+            const finalCPM = Math.round(currentIndex / elapsedMinutes);
+            const finalAccuracy = Math.round((correctCount / currentIndex) * 100);
+            
+            // 显示结果
+            document.getElementById('finalSpeed').textContent = finalCPM;
+            document.getElementById('finalAccuracy').textContent = finalAccuracy;
+            document.getElementById('finalCorrect').textContent = correctCount;
+            document.getElementById('finalErrors').textContent = errorCount;
+            document.getElementById('finalTime').textContent = document.getElementById('timer').textContent;
+            
+            showResultModal();
+        }
+
+        // ========== 模态框控制 ==========
+        function showResultModal() {
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('resultModal').classList.add('show');
+        }
+
+        function hideResultModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.getElementById('resultModal').classList.remove('show');
+        }
+
+        function showLoadTextModal() {
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('loadTextModal').classList.add('show');
+            document.getElementById('customTextInput').focus();
+        }
+
+        function hideLoadTextModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.getElementById('loadTextModal').classList.remove('show');
+            document.getElementById('customTextInput').value = '';
+        }
+
+        // ========== 载文功能 ==========
+        function loadCustomText() {
+            const text = document.getElementById('customTextInput').value.trim();
+            if (text) {
+                loadCustomArticle(text);
+                hideLoadTextModal();
+            }
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text.trim()) {
+                    loadCustomArticle(text);
+                }
+            } catch (err) {
+                // 如果无法访问剪贴板，显示载文框让用户手动粘贴
+                showLoadTextModal();
+                alert('无法自动读取剪贴板，请手动粘贴文本');
+            }
+        }
+
+        // ========== 页面加载完成后初始化 ==========
+        window.onload = init;
+    </script>
+</body>
+</html>
