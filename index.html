@@ -40,6 +40,19 @@
         .header-buttons {
             display: flex;
             gap: 10px;
+            align-items: center;
+        }
+
+        .mode-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 20px;
+        }
+
+        .mode-switch label {
+            font-size: 14px;
+            color: #666;
         }
 
         .btn {
@@ -274,6 +287,13 @@
     <div class="header">
         <h1>在线跟打器</h1>
         <div class="header-buttons">
+            <div class="mode-switch">
+                <label>输入模式：</label>
+                <select id="inputMode" class="btn btn-secondary" onchange="handleModeChange()">
+                    <option value="english">英文模式</option>
+                    <option value="chinese">中文模式</option>
+                </select>
+            </div>
             <select id="articleSelect" class="btn btn-secondary">
                 <option value="0">文章1：程序员的自我修养</option>
                 <option value="1">文章2：春天的故事</option>
@@ -370,6 +390,7 @@
         ];
 
         let currentArticle = '';
+        let processedArticle = ''; // 处理后的文章（中文模式下去除空格）
         let currentIndex = 0;
         let startTime = null;
         let timerInterval = null;
@@ -377,6 +398,9 @@
         let correctCount = 0;
         let errorCount = 0;
         let displayOffset = 0;
+        let inputMode = 'english'; // 'english' 或 'chinese'
+        let isComposing = false; // 是否正在输入法编辑中
+        
         const LINES_PER_PAGE = 7;
         const CHARS_PER_LINE = 35;
 
@@ -388,6 +412,16 @@
             // 绑定输入事件
             const input = document.getElementById('typingInput');
             input.addEventListener('input', handleInput);
+            
+            // 中文输入法事件监听
+            input.addEventListener('compositionstart', () => {
+                isComposing = true;
+            });
+            
+            input.addEventListener('compositionend', () => {
+                isComposing = false;
+                handleInput({ target: input });
+            });
             
             // 绑定文章选择事件
             document.getElementById('articleSelect').addEventListener('change', (e) => {
@@ -403,39 +437,68 @@
             });
         }
 
+        // ========== 模式切换处理 ==========
+        function handleModeChange() {
+            inputMode = document.getElementById('inputMode').value;
+            resetPractice();
+        }
+
+        // ========== 文章处理函数 ==========
+        function processArticleForMode(text) {
+            if (inputMode === 'chinese') {
+                // 中文模式：去除所有空格
+                return text.replace(/\s+/g, '');
+            }
+            return text;
+        }
+
+        // 过滤输入内容（中文模式下过滤英文字母）
+        function filterInputForMode(input) {
+            if (inputMode === 'chinese') {
+                // 中文模式：只保留中文字符、标点符号，过滤掉英文字母
+                return input.replace(/[a-zA-Z]/g, '');
+            }
+            return input;
+        }
+
         // ========== 文章加载与显示 ==========
         function loadArticle(index) {
             currentArticle = articles[index];
+            processedArticle = processArticleForMode(currentArticle);
             resetPractice();
         }
 
         function loadCustomArticle(text) {
             currentArticle = text.trim();
+            processedArticle = processArticleForMode(currentArticle);
             resetPractice();
         }
 
-        // 渲染文章内容 - 移除了current字符的高亮
+        // 渲染文章内容
         function renderArticle() {
             const container = document.getElementById('articleContent');
             container.innerHTML = '';
             
+            const articleToRender = processedArticle;
             const startIndex = displayOffset;
-            const endIndex = Math.min(startIndex + LINES_PER_PAGE * CHARS_PER_LINE, currentArticle.length);
+            const endIndex = Math.min(startIndex + LINES_PER_PAGE * CHARS_PER_LINE, articleToRender.length);
             
-            for (let i = 0; i < currentArticle.length; i++) {
+            // 获取过滤后的输入内容
+            const filteredInput = filterInputForMode(document.getElementById('typingInput').value);
+            
+            for (let i = 0; i < articleToRender.length; i++) {
                 const span = document.createElement('span');
                 span.className = 'char';
-                span.textContent = currentArticle[i];
+                span.textContent = articleToRender[i];
                 
-                if (i < currentIndex) {
-                    const inputChar = document.getElementById('typingInput').value[i];
-                    if (inputChar === currentArticle[i]) {
+                if (i < filteredInput.length) {
+                    const inputChar = filteredInput[i];
+                    if (inputChar === articleToRender[i]) {
                         span.classList.add('correct');
                     } else {
                         span.classList.add('incorrect');
                     }
                 }
-                // 移除了 else if (i === currentIndex) 的判断，不再添加current类
                 
                 // 只显示当前页的字符
                 if (i >= startIndex && i < endIndex) {
@@ -444,13 +507,19 @@
             }
             
             // 更新统计信息
-            document.getElementById('totalChars').textContent = currentArticle.length;
+            document.getElementById('totalChars').textContent = articleToRender.length;
         }
 
         // ========== 输入处理 ==========
         function handleInput(e) {
-            const input = e.target.value;
-            const inputLength = input.length;
+            // 如果正在使用输入法，暂不处理
+            if (isComposing && inputMode === 'chinese') {
+                return;
+            }
+            
+            const rawInput = e.target.value;
+            const filteredInput = filterInputForMode(rawInput);
+            const inputLength = filteredInput.length;
             
             // 第一次输入开始计时
             if (!startTime && inputLength > 0) {
@@ -471,8 +540,9 @@
             correctCount = 0;
             errorCount = 0;
             
-            for (let i = 0; i < inputLength && i < currentArticle.length; i++) {
-                if (input[i] === currentArticle[i]) {
+            const articleToCompare = processedArticle;
+            for (let i = 0; i < inputLength && i < articleToCompare.length; i++) {
+                if (filteredInput[i] === articleToCompare[i]) {
                     correctCount++;
                 } else {
                     errorCount++;
@@ -484,7 +554,7 @@
             updateStats();
             
             // 检查是否完成
-            if (inputLength >= currentArticle.length) {
+            if (inputLength >= articleToCompare.length) {
                 endPractice();
             }
         }
@@ -571,7 +641,8 @@
             document.getElementById('timer').textContent = '00:00';
             document.getElementById('correctChars').textContent = '0';
             
-            // 重新渲染文章
+            // 重新处理和渲染文章
+            processedArticle = processArticleForMode(currentArticle);
             renderArticle();
         }
 
@@ -645,4 +716,3 @@
     </script>
 </body>
 </html>
-
