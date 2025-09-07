@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>在线跟打器</title>
     <style>
         /* 全局样式 */
@@ -19,6 +19,10 @@
             display: flex;
             flex-direction: column;
             color: #333;
+            /* 防止移动端橡皮筋效果 */
+            position: fixed;
+            width: 100%;
+            touch-action: pan-y;
         }
         /* 顶部导航栏 */
         .header {
@@ -86,6 +90,21 @@
             background: #e0a800;
             box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
         }
+        /* 暂停按钮样式 */
+        .btn-pause {
+            background: #28a745;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        }
+        .btn-pause:hover {
+            background: #218838;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        .btn-pause.paused {
+            background: #dc3545;
+        }
+        .btn-pause.paused:hover {
+            background: #c82333;
+        }
         /* 主要内容区域 */
         .main-container {
             flex: 1;
@@ -112,6 +131,20 @@
             overflow-y: auto;
             padding: 30px;
             background: white;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* 阻止输入区域的点击事件冒泡 */
+        .typing-shield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .typing-shield.active {
+            pointer-events: auto;
         }
         /* 每一行的容器 - 修改为延伸宽度 */
         .line-container {
@@ -150,10 +183,16 @@
             outline: none;
             transition: all 0.2s ease;
             display: block;
+            position: relative;
+            z-index: 2;
         }
         .input-line:focus {
             background: rgba(66, 97, 238, 0.03);
             border-bottom: 2px solid #4361ee;
+        }
+        .input-line.disabled {
+            pointer-events: none;
+            opacity: 0.6;
         }
         /* 字符样式 */
         .char {
@@ -396,7 +435,125 @@
             font-weight: 600;
             color: #2c3e50;
         }
-        /* 响应式设计 */
+        /* 移动端竖屏特殊布局 */
+        @media (max-width: 768px) and (orientation: portrait) {
+            body {
+                height: 100vh;
+                position: relative;
+            }
+            .header {
+                padding: 8px 10px;
+                position: relative;
+                z-index: 10;
+            }
+            .header h1 {
+                font-size: 16px;
+                margin-right: 10px;
+            }
+            .header-buttons {
+                gap: 5px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                max-width: calc(100vw - 120px);
+            }
+            .mode-switch {
+                display: none;
+            }
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                flex-shrink: 0;
+            }
+            .mobile-stats-bar {
+                display: block;
+                position: sticky;
+                top: 0;
+                z-index: 5;
+            }
+            .mobile-stat-item {
+                flex: 1;
+            }
+            .mobile-stat-label {
+                font-size: 10px;
+            }
+            .mobile-stat-value {
+                font-size: 14px;
+            }
+            .main-container {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                padding: 0;
+                gap: 0;
+                overflow: hidden;
+                position: relative;
+                height: calc(100vh - 120px);
+            }
+            .practice-area {
+                flex: 1;
+                border-radius: 0;
+                box-shadow: none;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                position: relative;
+                height: 100%;
+            }
+            .stats-panel {
+                display: none;
+            }
+            .typing-container {
+                flex: 1;
+                padding: 10px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+                height: 100%;
+            }
+            .line-container {
+                margin-bottom: 15px;
+            }
+            .article-line {
+                font-size: 14px;
+                padding: 5px 0;
+                line-height: 1.4;
+            }
+            .input-line {
+                font-size: 14px;
+                padding: 5px 0;
+                line-height: 1.4;
+            }
+            /* 模态框移动端适配 */
+            .result-modal {
+                padding: 20px;
+                width: 85%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .load-text-modal {
+                padding: 15px;
+                width: 90%;
+            }
+            .load-text-modal textarea {
+                height: 200px;
+                font-size: 14px;
+            }
+            .time-limit-modal {
+                width: 85%;
+                padding: 20px;
+            }
+            .time-input {
+                width: 70px;
+                font-size: 16px;
+                padding: 8px;
+            }
+            .time-unit-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+        /* 通用移动端适配 */
         @media (max-width: 768px) {
             body {
                 height: 100vh;
@@ -490,8 +647,9 @@
                 <option value="2">文章3</option>
             </select>
             <button class="btn" onclick="showLoadTextModal()">载文</button>
-            <button class="btn btn-warning" onclick="showTimeLimitModal()">自定义时间</button>
-            <button class="btn btn-secondary" onclick="resetPractice()">重新开始</button>
+            <button class="btn btn-warning" onclick="showTimeLimitModal()">限时</button>
+            <button id="pauseBtn" class="btn btn-pause" onclick="togglePause()">暂停</button>
+            <button class="btn btn-secondary" onclick="resetPractice()">重置</button>
         </div>
     </div>
     <!-- 移动端统计栏 -->
@@ -519,6 +677,7 @@
     <div class="main-container">
         <!-- 左侧练习区 -->
         <div class="practice-area">
+            <div class="typing-shield" id="typingShield"></div>
             <div class="typing-container" id="typingContainer"></div>
         </div>
         <!-- 右侧统计面板 -->
@@ -637,6 +796,7 @@
         let startTime = null;
         let timerInterval = null;
         let isPaused = true;
+        let isManuallyPaused = false;
         let correctCount = 0;
         let errorCount = 0;
         let inputMode = 'english';
@@ -647,6 +807,8 @@
         let timeLimitInterval = null;
         // 动态设置每行字符数
         let CHARS_PER_LINE = 80;
+        // 防止输入法重复弹出
+        let lastFocusTime = 0;
         
         // 计算合适的每行字符数
         function calculateCharsPerLine() {
@@ -658,13 +820,68 @@
                 CHARS_PER_LINE = Math.max(50, Math.min(CHARS_PER_LINE, 120)); // 限制在50-120之间
             }
         }
+        
+        // ========== 暂停功能 ==========
+        function togglePause() {
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (isManuallyPaused) {
+                // 继续
+                isManuallyPaused = false;
+                isPaused = false;
+                pauseBtn.textContent = '暂停';
+                pauseBtn.classList.remove('paused');
+                enableInputs();
+                if (startTime) {
+                    // 恢复计时器
+                    const pausedTime = Date.now() - startTime;
+                    startTime = Date.now() - pausedTime;
+                    timerInterval = setInterval(() => {
+                        updateTimer();
+                        if (timeLimit) {
+                            timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+                            updateTimeRemaining();
+                        }
+                        updateSpeedRealtime();
+                    }, 100);
+                }
+            } else {
+                // 暂停
+                isManuallyPaused = true;
+                isPaused = true;
+                pauseBtn.textContent = '继续';
+                pauseBtn.classList.add('paused');
+                disableInputs();
+                stopTimer();
+                // 失去所有输入框焦点
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.classList.contains('input-line')) {
+                    activeElement.blur();
+                }
+            }
+        }
+        
+        function enableInputs() {
+            const inputs = document.querySelectorAll('.input-line');
+            inputs.forEach(input => {
+                input.classList.remove('disabled');
+            });
+            document.getElementById('typingShield').classList.remove('active');
+        }
+        
+        function disableInputs() {
+            const inputs = document.querySelectorAll('.input-line');
+            inputs.forEach(input => {
+                input.classList.add('disabled');
+            });
+            document.getElementById('typingShield').classList.add('active');
+        }
 
-        // ========== NEW: 按模式统计“应计入字数”的字符 ==========
+        // ========== NEW: 按模式统计"应计入字数"的字符 ==========
         // 中文模式：去除所有空白（空格/换行/制表），其余全部计入（包含中英文标点）
         function visibleLengthByMode(str) {
             return inputMode === 'chinese' ? str.replace(/\s/g, '').length : str.length;
         }
-        // 统计已输入的“应计入字数”，并裁剪到对应行长度，避免超出行末被多算
+        // 统计已输入的"应计入字数"，并裁剪到对应行长度，避免超出行末被多算
         function countTypedChars() {
             let total = 0;
             inputValues.forEach((value, idx) => {
@@ -695,6 +912,19 @@
                     processedArticle = processArticleForMode(currentArticle);
                     articleLines = splitIntoLines(processedArticle);
                     renderLines();
+                }
+            });
+            // 添加点击容器外部的事件处理
+            document.getElementById('typingShield').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            // 防止移动端默认行为
+            document.addEventListener('touchstart', (e) => {
+                if (e.target.classList.contains('input-line')) {
+                    return;
+                }
+                if (e.target.closest('.typing-container')) {
+                    e.preventDefault();
                 }
             });
         }
@@ -835,8 +1065,17 @@
                 inputLine.placeholder = '请输入上方文字...';
                 inputLine.addEventListener('input', (e) => handleLineInput(e, index));
                 inputLine.addEventListener('keydown', (e) => handleKeyDown(e, index));
-                inputLine.addEventListener('focus', () => handleInputFocus());
+                inputLine.addEventListener('focus', (e) => handleInputFocus(e));
                 inputLine.addEventListener('blur', () => handleInputBlur());
+                // 防止移动端输入法重复弹出
+                inputLine.addEventListener('touchstart', (e) => {
+                    const now = Date.now();
+                    if (now - lastFocusTime < 500) {
+                        e.preventDefault();
+                        return;
+                    }
+                    lastFocusTime = now;
+                });
                 if (inputMode === 'chinese') {
                     inputLine.addEventListener('compositionstart', () => {
                         isComposing = true;
@@ -852,13 +1091,17 @@
                 container.appendChild(lineContainer);
             });
             document.getElementById('totalChars').textContent = processedArticle.length;
-            if (articleLines.length > 0) {
-                document.getElementById('input-line-0').focus();
-            }
+            // 不自动聚焦第一个输入框
+            // if (articleLines.length > 0) {
+            //     document.getElementById('input-line-0').focus();
+            // }
         }
         // ========== 输入处理 ==========
         function handleLineInput(e, lineIndex) {
             if (isComposing && inputMode === 'chinese') {
+                return;
+            }
+            if (isManuallyPaused) {
                 return;
             }
             const input = e.target;
@@ -872,7 +1115,9 @@
             if (value.length === articleLines[lineIndex].length) {
                 if (lineIndex < articleLines.length - 1) {
                     setTimeout(() => {
-                        document.getElementById(`input-line-${lineIndex + 1}`).focus();
+                        if (!isManuallyPaused) {
+                            document.getElementById(`input-line-${lineIndex + 1}`).focus();
+                        }
                     }, 100);
                 } else {
                     checkCompletion();
@@ -880,6 +1125,10 @@
             }
         }
         function handleKeyDown(e, lineIndex) {
+            if (isManuallyPaused) {
+                e.preventDefault();
+                return;
+            }
             if (e.key === 'Enter') {
                 e.preventDefault();
                 if (lineIndex < articleLines.length - 1) {
@@ -914,7 +1163,11 @@
                 endPractice(false);
             }
         }
-        function handleInputFocus() {}
+        function handleInputFocus(e) {
+            if (isManuallyPaused) {
+                e.target.blur();
+            }
+        }
         function handleInputBlur() {}
         // ========== 计时器功能 ==========
         function startTimer() {
@@ -930,7 +1183,7 @@
                 updateSpeedRealtime();
             }, 100);
         }
-        // CHANGED: 速度 = “应计入字数” × 60 ÷ 用时（秒）
+        // CHANGED: 速度 = "应计入字数" × 60 ÷ 用时（秒）
         function updateSpeedRealtime() {
             if (!startTime) return;
             const elapsedSeconds = (Date.now() - startTime) / 1000;
@@ -975,7 +1228,7 @@
             });
             document.getElementById('correctChars').textContent = correctCount;
 
-            // CHANGED: 速度用“应计入字数”（中文包含标点）
+            // CHANGED: 速度用"应计入字数"（中文包含标点）
             if (startTime) {
                 const elapsedSeconds = (Date.now() - startTime) / 1000;
                 const typedForSpeed = countTypedChars();
@@ -995,6 +1248,7 @@
             stopTimer();
             startTime = null;
             isPaused = true;
+            isManuallyPaused = false;
             correctCount = 0;
             errorCount = 0;
             timeElapsed = 0;
@@ -1006,6 +1260,9 @@
             document.getElementById('timer').textContent = '00:00';
             document.getElementById('mobileTimer').textContent = '00:00';
             document.getElementById('correctChars').textContent = '0';
+            document.getElementById('pauseBtn').textContent = '暂停';
+            document.getElementById('pauseBtn').classList.remove('paused');
+            enableInputs();
             if (timeLimit) {
                 updateTimeRemaining();
             }
@@ -1014,11 +1271,11 @@
         function endPractice(isTimeUp) {
             stopTimer();
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-            // CHANGED: 最终速度同样按“应计入字数”
+            // CHANGED: 最终速度同样按"应计入字数"
             const totalTyped = countTypedChars(); // NEW: 中文包含标点
             const finalCPM = elapsedSeconds > 0 ? Math.round(totalTyped * 60 / elapsedSeconds) : 0;
 
-            // 准确率仍按“已对位比较过的字符数”计算
+            // 准确率仍按"已对位比较过的字符数"计算
             let comparedChars = 0;
             inputValues.forEach((value, lineIndex) => {
                 const line = articleLines[lineIndex];
