@@ -11,17 +11,15 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', 'Consolas', monospace;
-            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3f4f6 100%);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             color: #333;
         }
-
         /* 顶部导航栏 */
         .header {
             background: #ffffff;
@@ -33,32 +31,27 @@
             flex-shrink: 0;
             border-bottom: 1px solid #eaeaea;
         }
-
         .header h1 {
             font-size: 22px;
             color: #2c3e50;
             font-weight: 500;
         }
-
         .header-buttons {
             display: flex;
             gap: 15px;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .mode-switch {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-right: 10px;
         }
-
         .mode-switch label {
             font-size: 14px;
             color: #666;
         }
-
         .btn {
             padding: 8px 16px;
             background: #4361ee;
@@ -71,34 +64,28 @@
             box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
             white-space: nowrap;
         }
-
         .btn:hover {
             background: #3a56e4;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
         }
-
         .btn-secondary {
             background: #6c757d;
             box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
         }
-
         .btn-secondary:hover {
             background: #5a6268;
             box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
         }
-
         .btn-warning {
             background: #ffc107;
             color: #333;
             box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
         }
-
         .btn-warning:hover {
             background: #e0a800;
             box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
         }
-
         /* 主要内容区域 */
         .main-container {
             flex: 1;
@@ -106,86 +93,93 @@
             padding: 20px;
             gap: 20px;
             overflow: hidden;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3f4f6 100%);
         }
-
         /* 左侧练习区域 */
         .practice-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        /* 文章显示区 */
-        .article-display {
+            gap: 0;
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: 240px;
-            overflow-y: auto;
-            font-size: 18px;
-            line-height: 1.8;
-            letter-spacing: 0.5px;
-            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
-
-        .article-content {
-            font-family: 'Consolas', 'Courier New', monospace;
+        /* 文章显示和输入整合区 */
+        .typing-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: white;
+        }
+        /* 每一行的容器 - 修改为延伸宽度 */
+        .line-container {
+            margin-bottom: 25px;
+            position: relative;
+            width: 100%;
+        }
+        /* 文章行 - 修改字体和间距，增加字体粗细 */
+        .article-line {
+            font-size: 20px;
+            line-height: 1.5;
+            padding: 10px 0;
+            background: transparent;
+            color: #2c3e50;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-weight: 500;
+            letter-spacing: 0;
             white-space: pre-wrap;
+            margin-bottom: 5px;
+            width: 100%;
             word-break: break-all;
         }
-
+        /* 输入行 - 与文章行保持一致 */
+        .input-line {
+            width: 100%;
+            font-size: 20px;
+            line-height: 1.5;
+            padding: 10px 0;
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            background: transparent;
+            color: #333;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            letter-spacing: 0;
+            resize: none;
+            outline: none;
+            transition: all 0.2s ease;
+            display: block;
+        }
+        .input-line:focus {
+            background: rgba(66, 97, 238, 0.03);
+            border-bottom: 2px solid #4361ee;
+        }
         /* 字符样式 */
         .char {
             position: relative;
-            display: inline-block;
-            min-width: 0.5em;
-            transition: background-color 0.1s ease;
+            display: inline;
+            transition: all 0.1s ease;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-weight: 500;
         }
-
         .char.correct {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border-radius: 2px;
+            background: linear-gradient(180deg, transparent 60%, #4ade80 60%);
+            color: #16a34a;
         }
-
         .char.incorrect {
-            background-color: #ffebee;
-            color: #c62828;
+            background: linear-gradient(180deg, transparent 60%, #f87171 60%);
+            color: #dc2626;
+        }
+        .char.current {
+            animation: blink 1s ease-in-out infinite;
+            background: rgba(67, 97, 238, 0.2);
             border-radius: 2px;
-            text-decoration: underline;
         }
-
-        /* 输入区 */
-        .input-area {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #eaeaea;
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
         }
-
-        .typing-input {
-            width: 100%;
-            height: 240px;
-            padding: 15px;
-            font-size: 18px;
-            font-family: 'Consolas', 'Courier New', monospace;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            resize: none;
-            line-height: 1.8;
-            letter-spacing: 0.5px;
-            transition: border-color 0.2s ease;
-        }
-
-        .typing-input:focus {
-            outline: none;
-            border-color: #4361ee;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
         /* 右侧统计面板 */
         .stats-panel {
             width: 300px;
@@ -193,7 +187,6 @@
             flex-direction: column;
             gap: 15px;
         }
-
         .stat-card {
             background: white;
             padding: 15px;
@@ -201,44 +194,36 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border: 1px solid #eaeaea;
         }
-
         .stat-card h3 {
             margin-bottom: 8px;
             color: #666;
             font-size: 14px;
             font-weight: 500;
         }
-
         .stat-value {
             font-size: 24px;
             font-weight: 600;
             color: #2c3e50;
         }
-
         .stat-unit {
             font-size: 12px;
             color: #666;
             margin-left: 5px;
         }
-
         /* 剩余时间卡片特殊样式 */
         .stat-card.time-limit-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
         .stat-card.time-limit-card h3 {
             color: rgba(255, 255, 255, 0.9);
         }
-
         .stat-card.time-limit-card .stat-value {
             color: white;
         }
-
         .stat-card.time-limit-card .stat-unit {
             color: rgba(255, 255, 255, 0.9);
         }
-
         /* 结果显示 */
         .result-modal {
             display: none;
@@ -255,11 +240,9 @@
             width: 90%;
             border: 1px solid #eaeaea;
         }
-
         .result-modal.show {
             display: block;
         }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -270,11 +253,9 @@
             background: rgba(0,0,0,0.3);
             z-index: 999;
         }
-
         .modal-overlay.show {
             display: block;
         }
-
         /* 载文模态框 */
         .load-text-modal {
             display: none;
@@ -291,17 +272,14 @@
             max-width: 90%;
             border: 1px solid #eaeaea;
         }
-
         .load-text-modal.show {
             display: block;
         }
-
         .load-text-modal h3 {
             margin-bottom: 20px;
             color: #2c3e50;
             font-weight: 500;
         }
-
         .load-text-modal textarea {
             width: 100%;
             height: 300px;
@@ -313,20 +291,17 @@
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             line-height: 1.5;
         }
-
         .load-text-modal textarea:focus {
             outline: none;
             border-color: #4361ee;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
-
         .load-text-modal .btn-group {
             margin-top: 20px;
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
-
         /* 时间限制模态框 */
         .time-limit-modal {
             display: none;
@@ -343,18 +318,15 @@
             max-width: 90%;
             border: 1px solid #eaeaea;
         }
-
         .time-limit-modal.show {
             display: block;
         }
-
         .time-limit-modal h3 {
             margin-bottom: 25px;
             color: #2c3e50;
             font-weight: 500;
             text-align: center;
         }
-
         .time-input-group {
             display: flex;
             align-items: center;
@@ -362,7 +334,6 @@
             margin-bottom: 25px;
             justify-content: center;
         }
-
         .time-input {
             width: 100px;
             padding: 10px;
@@ -372,18 +343,15 @@
             border-radius: 6px;
             transition: border-color 0.2s ease;
         }
-
         .time-input:focus {
             outline: none;
             border-color: #4361ee;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
-
         .time-unit-selector {
             display: flex;
             gap: 10px;
         }
-
         .time-unit-btn {
             padding: 8px 16px;
             background: #f0f0f0;
@@ -392,19 +360,16 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
         .time-unit-btn.active {
             background: #4361ee;
             color: white;
             border-color: #4361ee;
         }
-
         .time-limit-modal .btn-group {
             display: flex;
             justify-content: center;
             gap: 10px;
         }
-
         /* 移动端头部统计栏 */
         .mobile-stats-bar {
             display: none;
@@ -413,122 +378,96 @@
             border-bottom: 1px solid #eaeaea;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
         .mobile-stats-container {
             display: flex;
             justify-content: space-around;
             align-items: center;
         }
-
         .mobile-stat-item {
             text-align: center;
         }
-
         .mobile-stat-label {
             font-size: 12px;
             color: #666;
             margin-bottom: 3px;
         }
-
         .mobile-stat-value {
             font-size: 18px;
             font-weight: 600;
             color: #2c3e50;
         }
-
         /* 响应式设计 */
         @media (max-width: 768px) {
             body {
                 height: 100vh;
                 overflow: hidden;
             }
-
             .header {
                 padding: 10px 15px;
             }
-
             .header h1 {
                 font-size: 18px;
             }
-
             .header-buttons {
                 gap: 8px;
             }
-
             .mode-switch {
                 display: none;
             }
-
             .btn {
                 padding: 6px 10px;
                 font-size: 12px;
             }
-
             .mobile-stats-bar {
                 display: block;
             }
-
             .main-container {
                 flex-direction: column;
-                padding: 15px;
-                gap: 15px;
-                height: calc(100vh - 120px);
-                overflow-y: auto;
+                padding: 10px;
+                gap: 10px;
             }
-
             .stats-panel {
                 display: none;
             }
-
-            .article-display {
-                height: 200px;
-                padding: 15px;
-                font-size: 16px;
-            }
-
-            .typing-input {
-                height: 150px;
-                font-size: 16px;
-                padding: 10px;
-            }
-
-            .input-area {
+            .typing-container {
                 padding: 15px;
             }
-
+            .article-line,
+            .input-line {
+                font-size: 16px;
+                padding: 8px 0;
+            }
+            .line-container {
+                margin-bottom: 20px;
+                padding-right: 0;
+            }
             .result-modal {
                 padding: 25px;
             }
-
             .time-limit-modal {
                 width: 300px;
                 padding: 20px;
             }
-
             .time-input {
                 width: 80px;
                 font-size: 18px;
             }
         }
-
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
             }
-
             .btn {
                 padding: 5px 8px;
                 font-size: 11px;
             }
-
-            .article-display {
-                height: 180px;
-                font-size: 14px;
+            .typing-container {
+                padding: 12px;
             }
-
-            .typing-input {
-                height: 120px;
+            .article-line,
+            .input-line {
                 font-size: 14px;
+                padding: 6px 0;
             }
         }
     </style>
@@ -555,7 +494,6 @@
             <button class="btn btn-secondary" onclick="resetPractice()">重新开始</button>
         </div>
     </div>
-
     <!-- 移动端统计栏 -->
     <div class="mobile-stats-bar">
         <div class="mobile-stats-container">
@@ -577,25 +515,12 @@
             </div>
         </div>
     </div>
-
     <!-- 主要内容区 -->
     <div class="main-container">
         <!-- 左侧练习区 -->
         <div class="practice-area">
-            <!-- 文章显示区 -->
-            <div class="article-display">
-                <div class="article-content" id="articleContent"></div>
-            </div>
-            
-            <!-- 输入区 -->
-            <div class="input-area">
-                <textarea class="typing-input" id="typingInput" 
-                    placeholder="点击这里开始输入..."
-                    onfocus="handleInputFocus()"
-                    onblur="handleInputBlur()"></textarea>
-            </div>
+            <div class="typing-container" id="typingContainer"></div>
         </div>
-
         <!-- 右侧统计面板 -->
         <div class="stats-panel">
             <div class="stat-card">
@@ -605,7 +530,6 @@
                     <span class="stat-unit">字/分</span>
                 </div>
             </div>
-            
             <div class="stat-card">
                 <h3>准确率</h3>
                 <div>
@@ -613,22 +537,19 @@
                     <span class="stat-unit">%</span>
                 </div>
             </div>
-            
             <div class="stat-card">
                 <h3>用时</h3>
                 <div>
                     <span class="stat-value" id="timer">00:00</span>
                 </div>
             </div>
-            
             <div class="stat-card">
                 <h3>进度</h3>
                 <div>
-                    <span id="correctChars">0</span> / 
+                    <span id="correctChars">0</span> /
                     <span id="totalChars">0</span> 字
                 </div>
             </div>
-
             <!-- 剩余时间卡片 -->
             <div class="stat-card time-limit-card" id="timeLimitCard" style="display: none;">
                 <h3>剩余时间</h3>
@@ -638,7 +559,6 @@
             </div>
         </div>
     </div>
-
     <!-- 结果模态框 -->
     <div class="modal-overlay" id="modalOverlay" onclick="hideAllModals()"></div>
     <div class="result-modal" id="resultModal">
@@ -652,7 +572,6 @@
         </div>
         <button class="btn" style="margin-top: 20px; width: 100%;" onclick="hideResultModal()">关闭</button>
     </div>
-
     <!-- 载文模态框 -->
     <div class="load-text-modal" id="loadTextModal">
         <h3>载入文章</h3>
@@ -662,7 +581,6 @@
             <button class="btn" onclick="loadCustomText()">确定</button>
         </div>
     </div>
-
     <!-- 时间限制模态框 -->
     <div class="time-limit-modal" id="timeLimitModal">
         <h3>设置限定时间</h3>
@@ -679,156 +597,170 @@
             <button class="btn" onclick="setTimeLimit()">确定</button>
         </div>
     </div>
-
     <script>
         // ========== 全局变量定义 ==========
         const chineseArticles = [
-            `编程是一门艺术，它不仅仅是敲击键盘写代码那么简单。一个优秀的程序员需要具备逻辑思维、创造力和解决问题的能力。在这个快速发展的时代，技术日新月异，我们必须保持学习的热情，不断提升自己的技能。代码质量的好坏直接影响到软件的稳定性和可维护性。因此，我们应该养成良好的编程习惯，写出简洁、高效、易读的代码。同时，团队合作也是软件开发中不可或缺的一部分。通过代码审查、知识分享和技术讨论，我们可以共同进步，创造出更好的产品。`,
-            `春天来了，万物复苏。公园里的花朵竞相绽放，红的、黄的、粉的，五彩缤纷，美不胜收。微风轻拂，带来阵阵花香，让人心旷神怡。孩子们在草地上奔跑嬉戏，欢声笑语回荡在空中。老人们坐在长椅上晒太阳，享受着这温暖的时光。小鸟在枝头欢快地歌唱，仿佛在庆祝这美好的季节。湖水波光粼粼，倒映着蓝天白云，构成一幅动人的画卷。这就是春天，充满生机与希望的季节。`,
+            `梦，是夜空中最亮的星，是心灵深处最柔软的角落，是现实与理想之间架起的虹桥。当我们谈论梦时，谈论的不仅是睡眠中的幻境，更是清醒时的向往与追求。而当我们思考"将梦赠予他人"时，便触及了人类精神世界中最动人的主题——传递与分享。
+"昨夜闲潭梦落花"，晏殊在梦中看见了春天的消逝，那是对美好事物流逝的感伤；"我欲因之梦吴越"，李白在梦中神游天姥山，那是对自由与超脱的向往；"铁马冰河入梦来"，陆游在梦中征战沙场，那是对家国统一的执念。这些梦，看似个人的精神活动，实则蕴含着普遍的人类情感。它们如同火种，等待着被传递，被点燃。
+梦之所以能够赠予，是因为它本身就具有共通性。每个人的梦都是独特的，却又能在他人心中引起共鸣。当马丁·路德·金说出"我有一个梦想"时，他的梦不再只属于他个人，而成为了千万人共同的梦。这个梦跨越了种族、阶层和时代，在无数人心中生根发芽。这便是梦的神奇之处——它既是个体的，又是普世的；既是私密的，又可以被分享。
+文学或许是赠梦最古老的方式。曹雪芹将他的"红楼一梦"赠予了世人，让我们在大观园中体验了人生的悲欢离合；卡夫卡将他荒诞的梦境赠予读者，让我们看到了现代人的困境与焦虑。每一部伟大的文学作品，都是作者将自己的梦境具象化，然后慷慨地赠予世界。读者在阅读中，不仅接收了作者的梦，更在这个过程中生发出属于自己的梦。
+教育则是赠梦最直接的途径。一位好老师，能够将知识的梦、探索的梦、成长的梦植入学生心中。钱学森将航天梦赠予了中国，袁隆平将"禾下乘凉梦"赠予了世界。他们不仅实现了自己的梦，更重要的是，他们培养了无数后继者，让梦想在一代代人中传承。这种传承不是简单的复制，而是在原有基础上的创新与超越。每一个接受梦想的人，都会根据自己的理解和时代的需要，赋予梦想新的内涵。
+艺术是赠梦最感性的表达。梵高将他眼中旋转的星空赠予了我们，贝多芬将他心中的欢乐颂赠予了人类。这些艺术家通过作品，将他们的梦境转化为可以被感知、被体验的形式，让千百年后的人们依然能够进入他们的精神世界。当我们站在《星夜》前，当我们聆听《第九交响曲》时，我们不仅在欣赏艺术，更是在接受一份跨越时空的精神馈赠。
+然而，赠梦并非单向的给予，它需要接受者有一颗开放和敏感的心。正如种子需要合适的土壤才能发芽，梦的传递也需要心灵的呼应。当我们愿意倾听他人的梦，理解他人的梦，我们才能真正接收到这份珍贵的礼物。这就像两个调音叉之间的共振，需要相同或相近的频率才能产生共鸣。
+在这个意义上，每一次真诚的交流都是一次赠梦的过程。父母将人生的梦赠予孩子，朋友之间分享各自的梦想，陌生人的故事激发我们新的梦境。这些看似平凡的时刻，实则是人类精神财富传递的重要方式。一个孩子因为父亲讲述的探险故事而梦想成为科学家，一个青年因为读到某个人物传记而确立人生方向，一个成年人因为朋友的鼓励而重拾搁置已久的梦想——这些都是梦的赠予在日常生活中的体现。`,
+            `当"嫦娥四号"在月球背面软着陆的那一刻，人类终于看到了那片亘古以来从未被地球人直接观察到的神秘土地。这不仅是科技的胜利，更是人类探索精神的写照——我们从未停止过向未知进发的脚步。
+从月球到火星，从深海到高空，人类的探索从未止步。然而，探索未知并非只是科学家和宇航员的专利。每个普通人的生命历程，同样是一场充满未知的旅程。我们每个人，都是自己人生航程中的探索者。
+回想人生的每个重要节点：第一天上学时忐忑不安的心情，第一次离家求学时的迷茫，第一次步入职场时的紧张……这些时刻，我们都在面对未知。正如航天器进入太空需要克服地球引力，我们进入人生新阶段也需要克服内心的恐惧与不安。未知，是成长的必经之路。
+记得高考填报志愿时，我在熟悉的家乡大学和千里之外的陌生城市之间犹豫。最终，我选择了远方。那座从未踏足的城市，那所只在网上见过照片的大学，对我来说就像月球背面一样神秘。但正是这份对未知的选择，让我遇见了不一样的风景，收获了更广阔的视野。如果当初选择了安逸熟悉的环境，也许我永远不会知道自己能够适应陌生的土地，不会发现自己内心深处那份渴望探索的勇气。
+"嫦娥四号"的成功并非一蹴而就。在它之前，有无数次的技术积累，有反复的模拟演练，有周密的风险评估。同样，我们在面对人生的未知领域时，也需要充分的准备。探索未知需要勇气，更需要准备。
+学习新技能是进入未知领域的准备，阅读是了解未知世界的窗口，思考是理解未知事物的钥匙。当疫情突然来袭，许多人的生活被打乱，工作方式被改变。那些提前学习了线上技能、培养了多元能力的人，在面对这个突如其来的未知挑战时，表现出了更强的适应能力。他们的经历告诉我们，虽然未知不可预测，但我们可以通过不断学习和积累，让自己拥有应对未知的能力。
+月球背面的探索，让我们发现了与正面截然不同的地质构造，获得了珍贵的科学数据。人生的未知同样充满惊喜。多少人在被迫改行后发现了真正的兴趣所在，多少人在陌生的环境中遇到了一生的挚友，多少人在未曾设想的道路上创造了精彩的人生。未知中蕴含着无限可能。
+一位朋友原本是程序员，因为身体原因不得不放弃高强度的工作。起初他很沮丧，觉得前路茫茫。但在休养期间，他开始尝试写作，记录自己的技术心得。没想到文章大受欢迎，最终他成为了一名技术作家，找到了新的人生方向。未知，有时是命运送来的另一份礼物。如果没有那次被迫的改变，他可能永远不会发现自己在文字表达上的天赋，不会体验到用文字影响他人的成就感。
+"天问一号"飞向火星，代表着人类探索的脚步永不停歇。在个人层面，保持对未知的好奇心同样重要。随着年龄增长，很多人开始满足于熟悉的生活圈，不愿意尝试新事物。但正是这种安于现状的心态，让生活失去了色彩。保持探索的心态，是让生命保持活力的秘诀。
+七十岁学画画，八十岁学电脑，九十岁写回忆录……那些在任何年龄都保持探索精神的人，他们的生命始终充满活力。未知不应该成为恐惧的源头，而应该是保持年轻的秘诀。每一次对未知的探索，都是对自我的突破，都是生命力的彰显。
+探索未知的过程中，失败和挫折在所难免。"嫦娥一号"到"嫦娥四号"，中间经历了多少次试验和改进。人生亦是如此，每一次失败都是通向成功的垫脚石。重要的不是避免失败，而是从失败中学习，在挫折中成长。当我们以探索者的心态面对未知时，失败就不再可怕，它只是探索过程中的一个环节。
+从月球到火星，从已知到未知，人类的探索永无止境。我们每个人的人生，也是一场探索未知的旅程。也许我们无法像宇航员那样遨游太空，但我们可以在自己的人生轨道上，勇敢地向未知之境进发。
+当我们回首往事时会发现，那些曾经让我们恐惧的未知，都已成为人生中宝贵的经历。而前方，还有更多的未知在等待着我们去探索、去发现、去征服。正如"嫦娥"揭开了月背的面纱，"天问"踏上了火星的征程，让我们在各自的人生航程中，永远保持探索的勇气与热情，向着属于自己的未知之境，勇敢进发！`,
             `科技改变生活，创新引领未来。从智能手机到人工智能，从互联网到物联网，技术的发展深刻地改变着我们的生活方式。在线教育让知识传播更加便捷，远程医疗让看病就医更加方便，电子商务让购物更加轻松。5G技术的普及将带来更快的网速和更低的延迟，为自动驾驶、虚拟现实等新技术的应用奠定基础。区块链技术保障了数据的安全性和透明性，量子计算将突破传统计算的极限。让我们拥抱科技，共创美好未来。`
         ];
-
         const englishArticles = [
-            `Technology has transformed the way we live, work, and communicate. From smartphones to artificial intelligence, innovations continue to reshape our daily experiences. The internet has connected people across the globe, breaking down geographical barriers and enabling instant communication. Social media platforms have revolutionized how we share information and maintain relationships. As we move forward, emerging technologies like virtual reality, blockchain, and quantum computing promise to bring even more dramatic changes. However, with these advancements come new challenges regarding privacy, security, and ethical considerations. It is crucial that we embrace innovation while remaining mindful of its impact on society and individuals.`,
-            `Learning a new language opens doors to countless opportunities and experiences. It enhances cognitive abilities, improves memory, and increases cultural awareness. When we study a foreign language, we gain insights into different ways of thinking and expressing ideas. This process challenges our brains and helps develop problem-solving skills. Moreover, being multilingual in today's globalized world provides significant career advantages. It enables better communication with international colleagues and clients, making us more valuable in the job market. The journey of language learning may be challenging, but the rewards are immeasurable. Every new word learned is a step toward broader horizons and deeper understanding.`,
-            `The importance of environmental conservation cannot be overstated in our modern world. Climate change poses significant threats to ecosystems, wildlife, and human communities worldwide. We must take immediate action to reduce carbon emissions, protect natural habitats, and promote sustainable practices. Simple daily choices, such as recycling, using renewable energy, and reducing water consumption, can make a meaningful difference. Governments, businesses, and individuals must work together to create lasting solutions. Education plays a vital role in raising awareness and inspiring action. By teaching future generations about environmental responsibility, we can ensure a healthier planet for years to come. The time for change is now.`
+            `Technology has transformed the way we live,work,and communicate.From smartphones to artificial intelligence,innovations continue to reshape our daily experiences.The internet has connected people across the globe,breaking down geographical barriers and enabling instant communication.Social media platforms have revolutionized how we share information and maintain relationships.As we move forward,emerging technologies like virtual reality,blockchain,and quantum computing promise to bring even more dramatic changes.However,with these advancements come new challenges regarding privacy,security,and ethical considerations.It is crucial that we embrace innovation while remaining mindful of its impact on society and individuals.`,
+            `Learning a new language opens doors to countless opportunities and experiences.It enhances cognitive abilities,improves memory,and increases cultural awareness.When we study a foreign language,we gain insights into different ways of thinking and expressing ideas.This process challenges our brains and helps develop problem-solving skills.Moreover,being multilingual in today's globalized world provides significant career advantages.It enables better communication with international colleagues and clients,making us more valuable in the job market.The journey of language learning may be challenging,but the rewards are immeasurable.Every new word learned is a step toward broader horizons and deeper understanding.`,
+            `The importance of environmental conservation cannot be overstated in our modern world.Climate change poses significant threats to ecosystems,wildlife,and human communities worldwide.We must take immediate action to reduce carbon emissions,protect natural habitats,and promote sustainable practices.Simple daily choices,such as recycling,using renewable energy,and reducing water consumption,can make a meaningful difference.Governments,businesses,and individuals must work together to create lasting solutions.Education plays a vital role in raising awareness and inspiring action.By teaching future generations about environmental responsibility,we can ensure a healthier planet for years to come.The time for change is now.`
         ];
-
         let articles = englishArticles;
         let currentArticle = '';
         let processedArticle = '';
-        let currentIndex = 0;
+        let articleLines = [];
+        let inputValues = [];
+        let currentLineIndex = 0;
         let startTime = null;
         let timerInterval = null;
         let isPaused = true;
         let correctCount = 0;
         let errorCount = 0;
-        let displayOffset = 0;
         let inputMode = 'english';
         let isComposing = false;
-        
         // 时间限制相关变量
-        let timeLimit = null; // 限制时间（秒）
-        let timeElapsed = 0; // 已用时间（秒）
-        let timeLimitInterval = null; // 倒计时定时器
+        let timeLimit = null;
+        let timeElapsed = 0;
+        let timeLimitInterval = null;
+        // 动态设置每行字符数
+        let CHARS_PER_LINE = 80;
         
-        const LINES_PER_PAGE = 7;
-        const CHARS_PER_LINE = 35;
+        // 计算合适的每行字符数
+        function calculateCharsPerLine() {
+            const container = document.getElementById('typingContainer');
+            if (container) {
+                const containerWidth = container.clientWidth - 60; // 减去padding
+                const charWidth = 12; // 等宽字体每个字符大约12px宽
+                CHARS_PER_LINE = Math.floor(containerWidth / charWidth);
+                CHARS_PER_LINE = Math.max(50, Math.min(CHARS_PER_LINE, 120)); // 限制在50-120之间
+            }
+        }
 
+        // ========== NEW: 按模式统计“应计入字数”的字符 ==========
+        // 中文模式：去除所有空白（空格/换行/制表），其余全部计入（包含中英文标点）
+        function visibleLengthByMode(str) {
+            return inputMode === 'chinese' ? str.replace(/\s/g, '').length : str.length;
+        }
+        // 统计已输入的“应计入字数”，并裁剪到对应行长度，避免超出行末被多算
+        function countTypedChars() {
+            let total = 0;
+            inputValues.forEach((value, idx) => {
+                const line = articleLines[idx] || '';
+                const typed = inputMode === 'chinese' ? value.replace(/\s/g, '') : value;
+                total += Math.min(typed.length, line.length);
+            });
+            return total;
+        }
+        
         // ========== 初始化函数 ==========
         function init() {
+            calculateCharsPerLine();
             loadArticle(0);
-            
-            const input = document.getElementById('typingInput');
-            input.addEventListener('input', handleInput);
-            
-            input.addEventListener('compositionstart', () => {
-                isComposing = true;
-            });
-            
-            input.addEventListener('compositionend', () => {
-                isComposing = false;
-                handleInput({ target: input });
-            });
-            
             document.getElementById('articleSelect').addEventListener('change', (e) => {
                 loadArticle(parseInt(e.target.value));
             });
-            
             document.addEventListener('keydown', async (e) => {
                 if (e.altKey && e.key === 'e') {
                     e.preventDefault();
                     await pasteFromClipboard();
                 }
             });
+            // 监听窗口大小变化
+            window.addEventListener('resize', () => {
+                calculateCharsPerLine();
+                if (currentArticle) {
+                    processedArticle = processArticleForMode(currentArticle);
+                    articleLines = splitIntoLines(processedArticle);
+                    renderLines();
+                }
+            });
         }
-
         // ========== 时间限制功能 ==========
         function showTimeLimitModal() {
             document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('timeLimitModal').classList.add('show');
         }
-
         function hideTimeLimitModal() {
             document.getElementById('modalOverlay').classList.remove('show');
             document.getElementById('timeLimitModal').classList.remove('show');
         }
-
         function selectTimeUnit(btn) {
             document.querySelectorAll('.time-unit-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
-
         function setTimeLimit() {
             const value = parseInt(document.getElementById('timeValue').value);
             const unit = document.querySelector('.time-unit-btn.active').dataset.unit;
-            
             if (value && value > 0) {
                 timeLimit = unit === 'minutes' ? value * 60 : value;
-                
-                // 显示剩余时间卡片
                 document.getElementById('timeLimitCard').style.display = 'block';
                 document.getElementById('mobileTimeLimitDisplay').style.display = 'block';
-                
                 updateTimeRemaining();
                 hideTimeLimitModal();
-                
-                // 重置练习
                 resetPractice();
             }
         }
-
         function clearTimeLimit() {
             timeLimit = null;
             timeElapsed = 0;
-            
-            // 隐藏剩余时间卡片
             document.getElementById('timeLimitCard').style.display = 'none';
             document.getElementById('mobileTimeLimitDisplay').style.display = 'none';
-            
             if (timeLimitInterval) {
                 clearInterval(timeLimitInterval);
                 timeLimitInterval = null;
             }
-            
             hideTimeLimitModal();
         }
-
         function updateTimeRemaining() {
             if (timeLimit) {
                 const remaining = Math.max(0, timeLimit - timeElapsed);
                 const minutes = Math.floor(remaining / 60);
                 const seconds = remaining % 60;
                 const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
                 document.getElementById('timeRemaining').textContent = timeStr;
                 document.getElementById('mobileTimeRemaining').textContent = timeStr;
-                
-                // 时间到了
                 if (remaining === 0) {
                     endPractice(true);
                 }
             }
         }
-
         // ========== 模式切换处理 ==========
         function handleModeChange() {
             inputMode = document.getElementById('inputMode').value;
-            
             if (inputMode === 'english') {
                 articles = englishArticles;
             } else {
                 articles = chineseArticles;
             }
-            
             updateArticleSelectOptions();
             loadArticle(0);
         }
-
         function updateArticleSelectOptions() {
             const articleSelect = document.getElementById('articleSelect');
             const options = articleSelect.options;
-            
             if (inputMode === 'english') {
                 options[0].text = '文章1';
                 options[1].text = '文章2';
@@ -839,152 +771,182 @@
                 options[2].text = '文章3';
             }
         }
-
         // ========== 文章处理函数 ==========
         function processArticleForMode(text) {
             if (inputMode === 'chinese') {
+                // 中文模式：仅移除所有空白，保留标点符号（会计入字数）
                 return text.replace(/\s+/g, '');
             } else {
-                return text.replace(/([,.])\s+/g, '$1');
+                // 英文模式：处理标点后的空格（保持原有行为）
+                text = text.trim();
+                text = text.replace(/, /g, ',');
+                text = text.replace(/\. /g, '.');
+                return text;
             }
         }
-
-        function filterInputForMode(input) {
-            if (inputMode === 'chinese') {
-                return input.replace(/[a-zA-Z]/g, '');
+        function splitIntoLines(text) {
+            const lines = [];
+            let currentPos = 0;
+            while (currentPos < text.length) {
+                let lineEnd = Math.min(currentPos + CHARS_PER_LINE, text.length);
+                lines.push(text.substring(currentPos, lineEnd));
+                currentPos = lineEnd;
             }
-            return input;
+            return lines;
         }
-
         // ========== 文章加载与显示 ==========
         function loadArticle(index) {
             currentArticle = articles[index];
             processedArticle = processArticleForMode(currentArticle);
+            articleLines = splitIntoLines(processedArticle);
             resetPractice();
         }
-
         function loadCustomArticle(text) {
             currentArticle = text.trim();
             processedArticle = processArticleForMode(currentArticle);
+            articleLines = splitIntoLines(processedArticle);
             resetPractice();
         }
-
-        function renderArticle() {
-            const container = document.getElementById('articleContent');
+        function renderLines() {
+            const container = document.getElementById('typingContainer');
             container.innerHTML = '';
-            
-            const articleToRender = processedArticle;
-            const startIndex = displayOffset;
-            const endIndex = Math.min(startIndex + LINES_PER_PAGE * CHARS_PER_LINE, articleToRender.length);
-            
-            const filteredInput = filterInputForMode(document.getElementById('typingInput').value);
-            
-            for (let i = 0; i < articleToRender.length; i++) {
-                const span = document.createElement('span');
-                span.className = 'char';
-                span.textContent = articleToRender[i];
-                
-                if (i < filteredInput.length) {
-                    const inputChar = filteredInput[i];
-                    if (inputChar === articleToRender[i]) {
-                        span.classList.add('correct');
-                    } else {
-                        span.classList.add('incorrect');
-                    }
+            inputValues = [];
+            articleLines.forEach((line, index) => {
+                const lineContainer = document.createElement('div');
+                lineContainer.className = 'line-container';
+                // 文章行
+                const articleLine = document.createElement('div');
+                articleLine.className = 'article-line';
+                articleLine.id = `article-line-${index}`;
+                let lineHtml = '';
+                for (let i = 0; i < line.length; i++) {
+                    // 注意：这里不做 escape 是基于输入内容为普通文本的前提
+                    lineHtml += `<span class="char" id="char-${index}-${i}">${line[i]}</span>`;
                 }
-                
-                if (i >= startIndex && i < endIndex) {
-                    container.appendChild(span);
+                articleLine.innerHTML = lineHtml;
+                // 输入行
+                const inputLine = document.createElement('input');
+                inputLine.type = 'text';
+                inputLine.className = 'input-line';
+                inputLine.id = `input-line-${index}`;
+                inputLine.dataset.lineIndex = index;
+                // CHANGED: 限制为该行的真实长度，避免多输入导致统计偏差
+                inputLine.maxLength = line.length; // 原来是 CHARS_PER_LINE
+                inputLine.placeholder = '请输入上方文字...';
+                inputLine.addEventListener('input', (e) => handleLineInput(e, index));
+                inputLine.addEventListener('keydown', (e) => handleKeyDown(e, index));
+                inputLine.addEventListener('focus', () => handleInputFocus());
+                inputLine.addEventListener('blur', () => handleInputBlur());
+                if (inputMode === 'chinese') {
+                    inputLine.addEventListener('compositionstart', () => {
+                        isComposing = true;
+                    });
+                    inputLine.addEventListener('compositionend', () => {
+                        isComposing = false;
+                        handleLineInput({ target: inputLine }, index);
+                    });
                 }
+                inputValues[index] = '';
+                lineContainer.appendChild(articleLine);
+                lineContainer.appendChild(inputLine);
+                container.appendChild(lineContainer);
+            });
+            document.getElementById('totalChars').textContent = processedArticle.length;
+            if (articleLines.length > 0) {
+                document.getElementById('input-line-0').focus();
             }
-            
-            document.getElementById('totalChars').textContent = articleToRender.length;
         }
-
         // ========== 输入处理 ==========
-        function handleInput(e) {
+        function handleLineInput(e, lineIndex) {
             if (isComposing && inputMode === 'chinese') {
                 return;
             }
-            
-            const rawInput = e.target.value;
-            const filteredInput = filterInputForMode(rawInput);
-            const inputLength = filteredInput.length;
-            
-            if (!startTime && inputLength > 0) {
+            const input = e.target;
+            const value = input.value;
+            inputValues[lineIndex] = value;
+            if (!startTime && value.length > 0) {
                 startTimer();
             }
-            
-            currentIndex = inputLength;
-            
-            const currentPage = Math.floor(currentIndex / (LINES_PER_PAGE * CHARS_PER_LINE));
-            const newOffset = currentPage * LINES_PER_PAGE * CHARS_PER_LINE;
-            if (newOffset !== displayOffset) {
-                displayOffset = newOffset;
-            }
-            
-            correctCount = 0;
-            errorCount = 0;
-            
-            const articleToCompare = processedArticle;
-            for (let i = 0; i < inputLength && i < articleToCompare.length; i++) {
-                if (filteredInput[i] === articleToCompare[i]) {
-                    correctCount++;
+            updateLineCharacters(lineIndex, value);
+            updateStats();
+            if (value.length === articleLines[lineIndex].length) {
+                if (lineIndex < articleLines.length - 1) {
+                    setTimeout(() => {
+                        document.getElementById(`input-line-${lineIndex + 1}`).focus();
+                    }, 100);
                 } else {
-                    errorCount++;
+                    checkCompletion();
                 }
             }
-            
-            renderArticle();
-            updateStats();
-            
-            if (inputLength >= articleToCompare.length) {
+        }
+        function handleKeyDown(e, lineIndex) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (lineIndex < articleLines.length - 1) {
+                    document.getElementById(`input-line-${lineIndex + 1}`).focus();
+                }
+            } else if (e.key === 'Backspace' && e.target.value === '' && lineIndex > 0) {
+                e.preventDefault();
+                const prevInput = document.getElementById(`input-line-${lineIndex - 1}`);
+                prevInput.focus();
+                prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
+            }
+        }
+        function updateLineCharacters(lineIndex, inputValue) {
+            const line = articleLines[lineIndex];
+            for (let i = 0; i < line.length; i++) {
+                const charSpan = document.getElementById(`char-${lineIndex}-${i}`);
+                charSpan.classList.remove('correct', 'incorrect', 'current');
+                if (i < inputValue.length) {
+                    if (inputValue[i] === line[i]) {
+                        charSpan.classList.add('correct');
+                    } else {
+                        charSpan.classList.add('incorrect');
+                    }
+                } else if (i === inputValue.length) {
+                    charSpan.classList.add('current');
+                }
+            }
+        }
+        function checkCompletion() {
+            let totalTyped = inputValues.join('');
+            if (totalTyped.length >= processedArticle.length) {
                 endPractice(false);
             }
         }
-
-        function handleInputFocus() {
-            if (timerInterval && isPaused) {
-                isPaused = false;
-            }
-        }
-
-        function handleInputBlur() {
-            if (timerInterval && !isPaused) {
-                isPaused = true;
-            }
-        }
-
+        function handleInputFocus() {}
+        function handleInputBlur() {}
         // ========== 计时器功能 ==========
         function startTimer() {
             startTime = Date.now();
             isPaused = false;
             timeElapsed = 0;
-            
             timerInterval = setInterval(() => {
-                if (!isPaused) {
-                    updateTimer();
-                    updateStats();
-                    
-                    // 更新限时倒计时
-                    if (timeLimit) {
-                        timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-                        updateTimeRemaining();
-                    }
+                updateTimer();
+                if (timeLimit) {
+                    timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+                    updateTimeRemaining();
                 }
+                updateSpeedRealtime();
             }, 100);
         }
-
+        // CHANGED: 速度 = “应计入字数” × 60 ÷ 用时（秒）
+        function updateSpeedRealtime() {
+            if (!startTime) return;
+            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            const typed = countTypedChars(); // NEW: 包含中文标点
+            const cpm = elapsedSeconds > 0 ? Math.round(typed * 60 / elapsedSeconds) : 0;
+            document.getElementById('speed').textContent = cpm;
+            document.getElementById('mobileSpeed').textContent = cpm;
+        }
         function updateTimer() {
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
             const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
             document.getElementById('timer').textContent = timeStr;
             document.getElementById('mobileTimer').textContent = timeStr;
         }
-
         function stopTimer() {
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -995,40 +957,48 @@
                 timeLimitInterval = null;
             }
         }
-
         // ========== 统计更新 ==========
         function updateStats() {
+            correctCount = 0;
+            errorCount = 0;
+            let totalTypedForAccuracy = 0;
+            inputValues.forEach((value, lineIndex) => {
+                const line = articleLines[lineIndex];
+                for (let i = 0; i < value.length && i < line.length; i++) {
+                    totalTypedForAccuracy++;
+                    if (value[i] === line[i]) {
+                        correctCount++;
+                    } else {
+                        errorCount++;
+                    }
+                }
+            });
             document.getElementById('correctChars').textContent = correctCount;
-            
-            if (startTime && currentIndex > 0) {
-                const elapsedMinutes = (Date.now() - startTime) / 60000;
-                const cpm = Math.round(currentIndex / elapsedMinutes);
+
+            // CHANGED: 速度用“应计入字数”（中文包含标点）
+            if (startTime) {
+                const elapsedSeconds = (Date.now() - startTime) / 1000;
+                const typedForSpeed = countTypedChars();
+                const cpm = elapsedSeconds > 0 ? Math.round(typedForSpeed * 60 / elapsedSeconds) : 0;
                 document.getElementById('speed').textContent = cpm;
                 document.getElementById('mobileSpeed').textContent = cpm;
             }
-            
-            if (currentIndex > 0) {
-                const accuracy = Math.round((correctCount / currentIndex) * 100);
+
+            if (totalTypedForAccuracy > 0) {
+                const accuracy = Math.round((correctCount / totalTypedForAccuracy) * 100);
                 document.getElementById('accuracy').textContent = accuracy;
                 document.getElementById('mobileAccuracy').textContent = accuracy;
             }
         }
-
         // ========== 练习控制 ==========
         function resetPractice() {
             stopTimer();
-            
-            currentIndex = 0;
             startTime = null;
             isPaused = true;
             correctCount = 0;
             errorCount = 0;
-            displayOffset = 0;
             timeElapsed = 0;
-            
-            document.getElementById('typingInput').value = '';
-            document.getElementById('typingInput').focus();
-            
+            currentLineIndex = 0;
             document.getElementById('speed').textContent = '0';
             document.getElementById('mobileSpeed').textContent = '0';
             document.getElementById('accuracy').textContent = '100';
@@ -1036,68 +1006,63 @@
             document.getElementById('timer').textContent = '00:00';
             document.getElementById('mobileTimer').textContent = '00:00';
             document.getElementById('correctChars').textContent = '0';
-            
             if (timeLimit) {
                 updateTimeRemaining();
             }
-            
-            processedArticle = processArticleForMode(currentArticle);
-            renderArticle();
+            renderLines();
         }
-
         function endPractice(isTimeUp) {
             stopTimer();
-            
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-            const elapsedMinutes = elapsedSeconds / 60;
-            const finalCPM = Math.round(currentIndex / elapsedMinutes);
-            const finalAccuracy = currentIndex > 0 ? Math.round((correctCount / currentIndex) * 100) : 100;
-            
+            // CHANGED: 最终速度同样按“应计入字数”
+            const totalTyped = countTypedChars(); // NEW: 中文包含标点
+            const finalCPM = elapsedSeconds > 0 ? Math.round(totalTyped * 60 / elapsedSeconds) : 0;
+
+            // 准确率仍按“已对位比较过的字符数”计算
+            let comparedChars = 0;
+            inputValues.forEach((value, lineIndex) => {
+                const line = articleLines[lineIndex];
+                comparedChars += Math.min(value.length, line.length);
+            });
+            const finalAccuracy = comparedChars > 0 ? Math.round((correctCount / comparedChars) * 100) : 100;
+
             document.getElementById('finalSpeed').textContent = finalCPM;
             document.getElementById('finalAccuracy').textContent = finalAccuracy;
             document.getElementById('finalCorrect').textContent = correctCount;
             document.getElementById('finalErrors').textContent = errorCount;
             document.getElementById('finalTime').textContent = document.getElementById('timer').textContent;
-            
             if (isTimeUp) {
                 document.querySelector('#resultModal h2').textContent = '时间到！';
             } else {
                 document.querySelector('#resultModal h2').textContent = '练习完成！';
             }
-            
             showResultModal();
         }
-
         // ========== 模态框控制 ==========
         function showResultModal() {
             document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('resultModal').classList.add('show');
         }
-
         function hideResultModal() {
             document.getElementById('modalOverlay').classList.remove('show');
             document.getElementById('resultModal').classList.remove('show');
         }
-
         function showLoadTextModal() {
             document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('loadTextModal').classList.add('show');
             document.getElementById('customTextInput').focus();
         }
-
         function hideLoadTextModal() {
             document.getElementById('modalOverlay').classList.remove('show');
             document.getElementById('loadTextModal').classList.remove('show');
             document.getElementById('customTextInput').value = '';
         }
-
         function hideAllModals() {
             document.getElementById('modalOverlay').classList.remove('show');
             document.getElementById('resultModal').classList.remove('show');
             document.getElementById('loadTextModal').classList.remove('show');
             document.getElementById('timeLimitModal').classList.remove('show');
         }
-
         // ========== 载文功能 ==========
         function loadCustomText() {
             const text = document.getElementById('customTextInput').value.trim();
@@ -1106,7 +1071,6 @@
                 hideLoadTextModal();
             }
         }
-
         async function pasteFromClipboard() {
             try {
                 const text = await navigator.clipboard.readText();
@@ -1118,7 +1082,6 @@
                 alert('无法自动读取剪贴板，请手动粘贴文本');
             }
         }
-
         // ========== 页面加载完成后初始化 ==========
         window.onload = init;
     </script>
