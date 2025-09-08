@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线跟打器</title>
     <style>
         /* 全局样式 */
@@ -19,10 +19,6 @@
             display: flex;
             flex-direction: column;
             color: #333333;
-            /* 防止移动端橡皮筋效果 */
-            position: fixed;
-            width: 100%;
-            touch-action: pan-y;
         }
         /* 顶部导航栏 */
         .header {
@@ -114,7 +110,7 @@
             overflow: hidden;
             background: linear-gradient(135deg, #e3f2fd 0%, #f3f4f6 100%);
         }
-        /* 左侧练习区域 - 优化布局 */
+        /* 左侧练习区域 */
         .practice-area {
             flex: 1;
             display: flex;
@@ -124,69 +120,53 @@
             border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             overflow: hidden;
-            min-width: 0; /* 允许内容收缩 */
+            min-width: 0;
         }
         /* 文章显示和输入整合区 */
         .typing-container {
             flex: 1;
             overflow-y: auto;
-            padding: 30px 40px; /* 增加左右内边距 */
+            padding: 30px 40px;
             background: #FFFFFF;
-            -webkit-overflow-scrolling: touch;
-        }
-        /* 阻止输入区域的点击事件冒泡 */
-        .typing-shield {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .typing-shield.active {
-            pointer-events: auto;
         }
         /* 每一行的容器 */
         .line-container {
-            margin-bottom: 35px; /* 适当减少行间距 */
+            margin-bottom: 35px;
             position: relative;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: stretch;
         }
-        /* 文章行 - 优化样式 - 电脑端字体增大 */
-        .article-line {
-            font-size: 20px; /* 电脑端增大字体 */
+        /* 文章行和输入行统一样式 - 确保对齐 */
+        .article-line,
+        .input-line {
+            font-size: 20px;
             line-height: 30px;
             padding: 12px 18px;
-            background: #f8f9fa;
-            color: #333333;
             font-family: 'Microsoft YaHei', '微软雅黑', monospace;
             font-weight: 400;
-            letter-spacing: 0.5px; /* 增加字间距提高可读性 */
+            letter-spacing: 0.5px;
             white-space: pre;
-            margin-bottom: 8px;
             width: 100%;
             word-break: keep-all;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
             text-align: left;
         }
-        /* 输入行 - 优化样式 - 电脑端字体增大 */
+        /* 文章行特有样式 */
+        .article-line {
+            background: #f8f9fa;
+            color: #333333;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid transparent; /* 与输入框保持相同的边框宽度 */
+        }
+        /* 输入行特有样式 */
         .input-line {
-            width: 100%;
-            font-size: 20px; /* 与文章行保持一致 */
-            line-height: 30px;
-            padding: 12px 18px;
             border: 1px solid #DDDDDD;
             border-radius: 4px;
             background: #FFFFFF;
             color: #333333;
-            font-family: 'Microsoft YaHei', '微软雅黑', monospace;
-            font-weight: 400;
-            letter-spacing: 0.5px; /* 保持一致的字间距 */
             resize: none;
             outline: none;
             transition: border-color 0.2s ease;
@@ -210,7 +190,7 @@
             transition: all 0.1s ease;
             font-family: 'Microsoft YaHei', '微软雅黑', monospace;
             font-weight: 400;
-            padding: 0 1px; /* 微调字符间距 */
+            padding: 0 1px;
         }
         .char.correct {
             background: linear-gradient(180deg, transparent 50%, #4ade80 50%);
@@ -230,9 +210,9 @@
             0%, 50%, 100% { opacity: 1; }
             25%, 75% { opacity: 0.6; }
         }
-        /* 右侧统计面板 - 优化宽度 */
+        /* 右侧统计面板 */
         .stats-panel {
-            width: 260px; /* 稍微减小宽度，给左侧更多空间 */
+            width: 260px;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -421,83 +401,19 @@
             justify-content: center;
             gap: 10px;
         }
-        /* 移动端头部统计栏 */
-        .mobile-stats-bar {
-            display: none;
-            background: white;
-            padding: 10px 15px;
-            border-bottom: 1px solid #eaeaea;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .mobile-stats-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .mobile-stat-item {
-            text-align: center;
-        }
-        .mobile-stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 3px;
-        }
-        .mobile-stat-value {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        /* 竖屏专用样式 */
-        .mobile-header {
-            display: none;
-        }
-        .mobile-buttons {
-            display: none;
-        }
-        .mobile-progress-bar {
-            display: none;
-        }
-        .mobile-stats {
-            display: none;
-        }
-        
-        /* 添加收起键盘按钮 */
-        .keyboard-hide-btn {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #4361ee;
-            color: white;
-            border: none;
-            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
-            z-index: 1000;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* 大屏幕优化 - 字体更大 */
+        /* 大屏幕优化 */
         @media (min-width: 1440px) {
             .typing-container {
                 padding: 35px 50px;
             }
-            .article-line {
-                font-size: 22px;
-                line-height: 32px;
-                padding: 14px 20px;
-            }
+            .article-line,
             .input-line {
                 font-size: 22px;
                 line-height: 32px;
                 padding: 14px 20px;
             }
         }
-
-        /* 超大屏幕优化 - 字体最大 */
+        /* 超大屏幕优化 */
         @media (min-width: 1920px) {
             .main-container {
                 max-width: 1800px;
@@ -507,262 +423,18 @@
             .typing-container {
                 padding: 40px 60px;
             }
-            .article-line {
-                font-size: 24px;
-                line-height: 36px;
-                padding: 16px 22px;
-            }
+            .article-line,
             .input-line {
                 font-size: 24px;
                 line-height: 36px;
                 padding: 16px 22px;
             }
         }
-
-        /* 平板横屏样式 */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .typing-container {
-                padding: 25px 30px;
-            }
-            .article-line {
-                font-size: 18px !important;
-                line-height: 28px !important;
-            }
-            .input-line {
-                font-size: 18px !important;
-                line-height: 28px !important;
-            }
-            .stats-panel {
-                width: 240px;
-            }
-        }
-
-        /* 移动端横屏样式 */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .typing-container {
-                padding: 20px 25px;
-            }
-            .article-line {
-                font-size: 16px !important;
-                line-height: 24px !important;
-                padding: 8px 12px !important;
-            }
-            .input-line {
-                font-size: 16px !important;
-                line-height: 24px !important;
-                padding: 8px 12px !important;
-            }
-            .stats-panel {
-                width: 220px;
-            }
-        }
-
-        /* 移动端竖屏特殊布局 */
-        @media (max-width: 768px) and (orientation: portrait) {
-            body {
-                background: white;
-                height: 100vh;
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-            }
-            
-            /* 隐藏原有header和stats */
-            .header {
-                display: none;
-            }
-            .stats-panel {
-                display: none;
-            }
-            .mobile-stats-bar {
-                display: none;
-            }
-            
-            /* 竖屏专用头部 */
-            .mobile-header {
-                display: block;
-                width: 100%;
-                text-align: center;
-                margin: 10px auto;
-            }
-            .mobile-header h1 {
-                font-size: 20px;
-                font-weight: bold;
-                line-height: 40px;
-                color: #333;
-            }
-            
-            /* 竖屏按钮组 */
-            .mobile-buttons {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
-                width: 100%;
-                padding: 0 14px;
-                margin: 0 auto 10px;
-            }
-            .mobile-btn {
-                flex: 1;
-                height: 32px;
-                border-radius: 6px;
-                font-size: 14px;
-                color: black;
-                background: white;
-                border: 1px solid #ddd;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            /* 进度条 */
-            .mobile-progress-bar {
-                display: block;
-                width: calc(100% - 28px);
-                margin: 0 14px 10px;
-            }
-            .progress-bg {
-                width: 100%;
-                height: 6px;
-                background: #e0e0e0;
-                border-radius: 3px;
-                overflow: hidden;
-            }
-            .progress-fill {
-                height: 100%;
-                background: #ff0000;
-                transition: width 0.3s ease;
-                border-radius: 3px;
-            }
-            
-            /* 移动端统计 */
-            .mobile-stats {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                width: 100%;
-                padding: 0 14px;
-                margin: 0 auto 10px;
-                font-size: 14px;
-                color: #666;
-            }
-            
-            /* 主容器 */
-            .main-container {
-                flex: 1;
-                width: 100%;
-                padding: 0;
-                gap: 0;
-                overflow: hidden;
-                background: white;
-                margin: 0 auto;
-            }
-            
-            .practice-area {
-                flex: 1;
-                border-radius: 0;
-                box-shadow: none;
-                width: 100%;
-                overflow: hidden;
-            }
-            
-            .typing-container {
-                flex: 1;
-                padding: 0 16px; /* 移动端适当的左右边距 */
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                width: 100%;
-            }
-            
-            .line-container {
-                margin-bottom: 25px; /* 移动端行间距 */
-                width: 100%;
-                padding: 0;
-            }
-            
-            /* 手机竖屏字体大小 */
-            .article-line {
-                font-size: 18px !important; /* 适中的字体大小 */
-                line-height: 24px !important;
-                padding: 10px 12px !important;
-                width: 100%;
-                letter-spacing: 0.3px !important;
-                background: #f8f9fa;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-                margin-bottom: 8px;
-            }
-            
-            .input-line {
-                font-size: 18px !important;
-                line-height: 24px !important;
-                padding: 10px 12px !important;
-                width: 100%;
-                letter-spacing: 0.3px !important;
-                border: 1px solid #DDDDDD;
-                border-radius: 4px;
-                background: #FFFFFF;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            }
-            
-            .input-line:focus {
-                border-color: #409EFF;
-                box-shadow: 0 2px 6px rgba(64, 158, 255, 0.2);
-            }
-            
-            .char {
-                padding: 0 0.5px !important;
-            }
-            
-            /* 显示收起键盘按钮 */
-            .keyboard-hide-btn {
-                display: block;
-            }
-            
-            /* 模态框移动端适配 */
-            .result-modal {
-                padding: 20px;
-                width: 85%;
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-            .load-text-modal {
-                padding: 20px;
-                width: 90%;
-                max-width: 350px;
-            }
-            .load-text-modal textarea {
-                height: 150px;
-                font-size: 14px;
-            }
-            .time-limit-modal {
-                width: 85%;
-                max-width: 320px;
-                padding: 20px;
-            }
-            .time-input {
-                width: 70px;
-                font-size: 16px;
-                padding: 8px;
-            }
-            .time-unit-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-        }
-
-        /* =========================
-           电脑端英文模式字体加大
-           ========================= */
-        @media (min-width: 1025px) {
-            body.mode-english .article-line,
-            body.mode-english .input-line {
-                font-size: 22px;
-                line-height: 32px;
-            }
+        /* 英文模式字体加大 */
+        body.mode-english .article-line,
+        body.mode-english .input-line {
+            font-size: 22px;
+            line-height: 32px;
         }
         @media (min-width: 1440px) {
             body.mode-english .article-line,
@@ -781,7 +453,7 @@
     </style>
 </head>
 <body>
-    <!-- 原有头部导航（横屏显示） -->
+    <!-- 顶部导航 -->
     <div class="header">
         <h1>在线跟打器</h1>
         <div class="header-buttons">
@@ -804,60 +476,10 @@
         </div>
     </div>
     
-    <!-- 竖屏专用头部 -->
-    <div class="mobile-header">
-        <h1>在线跟打器</h1>
-    </div>
-    
-    <!-- 竖屏按钮组 -->
-    <div class="mobile-buttons">
-        <button class="mobile-btn" id="mobileStartBtn" onclick="mobileStart()">开始</button>
-        <button class="mobile-btn" id="mobilePauseBtn" onclick="togglePause()">暂停</button>
-        <button class="mobile-btn" onclick="showLoadTextModal()">载文</button>
-        <button class="mobile-btn" onclick="showTimeLimitModal()">限时</button>
-        <button class="mobile-btn" onclick="resetPractice()">重开</button>
-    </div>
-    
-    <!-- 竖屏进度条 -->
-    <div class="mobile-progress-bar">
-        <div class="progress-bg">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-        </div>
-    </div>
-    
-    <!-- 竖屏统计信息 -->
-    <div class="mobile-stats">
-        <span>速度: <span id="mobileSpeedDisplay">0</span> 字/分</span>
-        <span><span id="mobileTypedChars">0</span>/<span id="mobileTotalChars">0</span> 字</span>
-    </div>
-    
-    <!-- 移动端统计栏（原有，现隐藏） -->
-    <div class="mobile-stats-bar">
-        <div class="mobile-stats-container">
-            <div class="mobile-stat-item">
-                <div class="mobile-stat-label">速度</div>
-                <div class="mobile-stat-value"><span id="mobileSpeed">0</span> 字/分</div>
-            </div>
-            <div class="mobile-stat-item">
-                <div class="mobile-stat-label">准确率</div>
-                <div class="mobile-stat-value"><span id="mobileAccuracy">100</span>%</div>
-            </div>
-            <div class="mobile-stat-item">
-                <div class="mobile-stat-label">用时</div>
-                <div class="mobile-stat-value" id="mobileTimer">00:00</div>
-            </div>
-            <div class="mobile-stat-item" id="mobileTimeLimitDisplay" style="display: none;">
-                <div class="mobile-stat-label">剩余</div>
-                <div class="mobile-stat-value" id="mobileTimeRemaining">--:--</div>
-            </div>
-        </div>
-    </div>
-    
     <!-- 主要内容区 -->
     <div class="main-container">
         <!-- 左侧练习区 -->
         <div class="practice-area">
-            <div class="typing-shield" id="typingShield"></div>
             <div class="typing-container" id="typingContainer"></div>
         </div>
         <!-- 右侧统计面板 -->
@@ -898,9 +520,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- 收起键盘按钮 -->
-    <button class="keyboard-hide-btn" id="keyboardHideBtn" onclick="hideKeyboard()">↓</button>
     
     <!-- 结果模态框 -->
     <div class="modal-overlay" id="modalOverlay" onclick="hideAllModals()"></div>
@@ -993,56 +612,19 @@
         let timeElapsed = 0;
         let timeLimitInterval = null;
         // 固定每行字符数
-        let CHARS_PER_LINE = 38;
-        // 防止输入法重复弹出
-        let lastFocusTime = 0;
-        // 记录当前是否有输入框聚焦
-        let hasInputFocus = false;
-        let inputFocusTimer = null; // 新增：防止输入法收起的定时器
+        let CHARS_PER_LINE = 56;
         
-        // 计算每行字符数 - 根据屏幕宽度动态计算
+        // 计算每行字符数
         function calculateCharsPerLine() {
-            const isPortrait = window.matchMedia("(orientation: portrait)").matches;
             const screenWidth = window.innerWidth;
-
-            // 移动端竖屏：保持原有自适应逻辑（不做修改）
-            if (isPortrait && screenWidth <= 768) {
-                CHARS_PER_LINE = Math.floor((screenWidth - 32) / 18); // 基于字体大小18px计算
-                CHARS_PER_LINE = Math.max(18, Math.min(25, CHARS_PER_LINE)); // 限制在18-25字之间
-                return;
-            }
-
-            // 电脑端（宽度>1024）：英文=56字/行，中文=43字/行
             if (screenWidth > 1024) {
                 CHARS_PER_LINE = (inputMode === 'english') ? 56 : 43;
-                return;
-            }
-
-            // 其它情况（平板和手机横屏）保持原逻辑
-            if (screenWidth <= 768) {
-                // 手机横屏
-                CHARS_PER_LINE = 40;
             } else if (screenWidth <= 1024) {
-                // 平板
                 CHARS_PER_LINE = 45;
             }
         }
         
-        // 收起键盘功能
-        function hideKeyboard() {
-            const activeElement = document.activeElement;
-            if (activeElement && activeElement.classList.contains('input-line')) {
-                activeElement.blur();
-                hasInputFocus = false;
-                // 滚动到顶部
-                setTimeout(() => {
-                    window.scrollTo(0, 0);
-                    document.getElementById('typingContainer').scrollTop = 0;
-                }, 100);
-            }
-        }
-
-        // 根据模式更新 body class（用于电脑端英文模式字体加大）
+        // 根据模式更新 body class
         function updateModeClass() {
             const body = document.body;
             body.classList.remove('mode-english', 'mode-chinese');
@@ -1052,13 +634,11 @@
         // ========== 暂停功能 ==========
         function togglePause() {
             const pauseBtn = document.getElementById('pauseBtn');
-            const mobilePauseBtn = document.getElementById('mobilePauseBtn');
             if (isManuallyPaused) {
                 // 继续
                 isManuallyPaused = false;
                 isPaused = false;
-                if (pauseBtn) pauseBtn.textContent = '暂停';
-                if (mobilePauseBtn) mobilePauseBtn.textContent = '暂停';
+                pauseBtn.textContent = '暂停';
                 pauseBtn.classList.remove('paused');
                 enableInputs();
                 if (startTime) {
@@ -1078,28 +658,10 @@
                 // 暂停
                 isManuallyPaused = true;
                 isPaused = true;
-                if (pauseBtn) pauseBtn.textContent = '继续';
-                if (mobilePauseBtn) mobilePauseBtn.textContent = '继续';
+                pauseBtn.textContent = '继续';
                 pauseBtn.classList.add('paused');
                 disableInputs();
                 stopTimer();
-                // 失去所有输入框焦点 - 这将自动收起键盘
-                const activeElement = document.activeElement;
-                if (activeElement && activeElement.classList.contains('input-line')) {
-                    activeElement.blur();
-                    hasInputFocus = false;
-                }
-            }
-        }
-        
-        function mobileStart() {
-            if (isPaused && !startTime) {
-                const firstInput = document.getElementById('input-line-0');
-                if (firstInput) {
-                    // 直接聚焦，无延迟
-                    firstInput.focus();
-                    hasInputFocus = true;
-                }
             }
         }
         
@@ -1108,7 +670,6 @@
             inputs.forEach(input => {
                 input.classList.remove('disabled');
             });
-            document.getElementById('typingShield').classList.remove('active');
         }
         
         function disableInputs() {
@@ -1116,15 +677,14 @@
             inputs.forEach(input => {
                 input.classList.add('disabled');
             });
-            document.getElementById('typingShield').classList.add('active');
         }
 
-        // ========== NEW: 按模式统计"应计入字数"的字符 ==========
-        // 中文模式：去除所有空白（空格/换行/制表），其余全部计入（包含中英文标点）
+        // 按模式统计"应计入字数"的字符
         function visibleLengthByMode(str) {
             return inputMode === 'chinese' ? str.replace(/\s/g, '').length : str.length;
         }
-        // 统计已输入的"应计入字数"，并裁剪到对应行长度，避免超出行末被多算
+        
+        // 统计已输入的"应计入字数"
         function countTypedChars() {
             let total = 0;
             inputValues.forEach((value, idx) => {
@@ -1156,74 +716,8 @@
                     processedArticle = processArticleForMode(currentArticle);
                     articleLines = splitIntoLines(processedArticle);
                     renderLines();
-                    updateProgress();
                 }
             });
-            // 监听屏幕方向变化
-            window.addEventListener('orientationchange', () => {
-                setTimeout(() => {
-                    calculateCharsPerLine();
-                    if (currentArticle) {
-                        processedArticle = processArticleForMode(currentArticle);
-                        articleLines = splitIntoLines(processedArticle);
-                        renderLines();
-                        updateProgress();
-                    }
-                }, 100);
-            });
-            // 添加点击容器外部的事件处理
-            document.getElementById('typingShield').addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-            // 防止移动端默认行为
-            document.addEventListener('touchstart', (e) => {
-                if (e.target.classList.contains('input-line')) {
-                    return;
-                }
-                if (e.target.closest('.typing-container')) {
-                    e.preventDefault();
-                }
-            });
-            
-            // 监听键盘显示/隐藏事件（移动端）
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', () => {
-                    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-                    const isMobile = window.innerWidth <= 768;
-                    if (isPortrait && isMobile) {
-                        const keyboardHeight = window.innerHeight - window.visualViewport.height;
-                        const keyboardHideBtn = document.getElementById('keyboardHideBtn');
-                        if (keyboardHeight > 50) {
-                            // 键盘显示
-                            if (keyboardHideBtn) {
-                                keyboardHideBtn.style.bottom = (keyboardHeight + 10) + 'px';
-                            }
-                        } else {
-                            // 键盘隐藏
-                            if (keyboardHideBtn) {
-                                keyboardHideBtn.style.bottom = '20px';
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        
-        // 更新进度条
-        function updateProgress() {
-            const typed = countTypedChars();
-            const total = processedArticle.length;
-            const progress = total > 0 ? (typed / total * 100) : 0;
-            const progressFill = document.getElementById('progressFill');
-            if (progressFill) {
-                progressFill.style.width = progress + '%';
-            }
-            
-            // 更新移动端统计
-            const mobileTypedChars = document.getElementById('mobileTypedChars');
-            const mobileTotalChars = document.getElementById('mobileTotalChars');
-            if (mobileTypedChars) mobileTypedChars.textContent = typed;
-            if (mobileTotalChars) mobileTotalChars.textContent = total;
         }
         
         // ========== 时间限制功能 ==========
@@ -1245,7 +739,6 @@
             if (value && value > 0) {
                 timeLimit = unit === 'minutes' ? value * 60 : value;
                 document.getElementById('timeLimitCard').style.display = 'block';
-                document.getElementById('mobileTimeLimitDisplay').style.display = 'block';
                 updateTimeRemaining();
                 hideTimeLimitModal();
                 resetPractice();
@@ -1255,7 +748,6 @@
             timeLimit = null;
             timeElapsed = 0;
             document.getElementById('timeLimitCard').style.display = 'none';
-            document.getElementById('mobileTimeLimitDisplay').style.display = 'none';
             if (timeLimitInterval) {
                 clearInterval(timeLimitInterval);
                 timeLimitInterval = null;
@@ -1269,7 +761,6 @@
                 const seconds = remaining % 60;
                 const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 document.getElementById('timeRemaining').textContent = timeStr;
-                document.getElementById('mobileTimeRemaining').textContent = timeStr;
                 if (remaining === 0) {
                     endPractice(true);
                 }
@@ -1304,10 +795,10 @@
         // ========== 文章处理函数 ==========
         function processArticleForMode(text) {
             if (inputMode === 'chinese') {
-                // 中文模式：仅移除所有空白，保留标点符号（会计入字数）
+                // 中文模式：仅移除所有空白
                 return text.replace(/\s+/g, '');
             } else {
-                // 英文模式：处理标点后的空格（保持原有行为）
+                // 英文模式：处理标点后的空格
                 text = text.trim();
                 text = text.replace(/, /g, ',');
                 text = text.replace(/\. /g, '.');
@@ -1325,20 +816,16 @@
                 while (currentPos < text.length) {
                     let lineEnd = Math.min(currentPos + CHARS_PER_LINE, text.length);
                     
-                    // 如果不是结尾，且当前位置不是空格，需要找到单词边界
                     if (lineEnd < text.length && text[lineEnd] !== ' ' && text[lineEnd - 1] !== ' ') {
-                        // 查找最后一个空格或标点符号的位置
                         let lastBreak = lineEnd - 1;
                         while (lastBreak > currentPos) {
                             const char = text[lastBreak];
-                            // 在空格或标点符号处断行
                             if (char === ' ' || char === ',' || char === '.' || char === '!' || char === '?' || char === ';' || char === ':') {
                                 lineEnd = lastBreak + 1;
                                 break;
                             }
                             lastBreak--;
                         }
-                        // 如果找不到合适的断点，说明这是一个超长单词，强制断行
                         if (lastBreak === currentPos) {
                             lineEnd = Math.min(currentPos + CHARS_PER_LINE, text.length);
                         }
@@ -1386,7 +873,6 @@
                 articleLine.id = `article-line-${index}`;
                 let lineHtml = '';
                 for (let i = 0; i < line.length; i++) {
-                    // 注意：这里不做 escape 是基于输入内容为普通文本的前提
                     lineHtml += `<span class="char" id="char-${index}-${i}">${line[i]}</span>`;
                 }
                 articleLine.innerHTML = lineHtml;
@@ -1396,22 +882,11 @@
                 inputLine.className = 'input-line';
                 inputLine.id = `input-line-${index}`;
                 inputLine.dataset.lineIndex = index;
-                // 限制为该行的真实长度，避免多输入导致统计偏差
-                inputLine.maxLength = line.length;
+                // 不设置 maxLength，允许多打字符
                 inputLine.placeholder = '请输入上方文字...';
                 inputLine.addEventListener('input', (e) => handleLineInput(e, index));
                 inputLine.addEventListener('keydown', (e) => handleKeyDown(e, index));
                 inputLine.addEventListener('focus', (e) => handleInputFocus(e, index));
-                inputLine.addEventListener('blur', () => handleInputBlur());
-                // 防止移动端输入法重复弹出
-                inputLine.addEventListener('touchstart', (e) => {
-                    const now = Date.now();
-                    if (now - lastFocusTime < 500) {
-                        e.preventDefault();
-                        return;
-                    }
-                    lastFocusTime = now;
-                });
                 if (inputMode === 'chinese') {
                     inputLine.addEventListener('compositionstart', () => {
                         isComposing = true;
@@ -1427,28 +902,15 @@
                 container.appendChild(lineContainer);
             });
             document.getElementById('totalChars').textContent = processedArticle.length;
-            
-            // 更新移动端总字数
-            const mobileTotalChars = document.getElementById('mobileTotalChars');
-            if (mobileTotalChars) {
-                mobileTotalChars.textContent = processedArticle.length;
-            }
         }
         
-        // 修改：处理输入框聚焦时自动滚动（包括电脑端）
+        // 处理输入框聚焦时自动滚动
         function handleInputFocus(e, lineIndex) {
             if (isManuallyPaused) {
                 e.target.blur();
                 return;
             }
             
-            hasInputFocus = true;
-            
-            // 自动滚动逻辑（电脑端和移动端都适用）
-            const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-            const isMobile = window.innerWidth <= 768;
-            
-            // 使用 requestAnimationFrame 替代 setTimeout，实现更快的响应
             requestAnimationFrame(() => {
                 const lineContainer = e.target.parentElement;
                 const typingContainer = document.getElementById('typingContainer');
@@ -1457,38 +919,28 @@
                     const containerHeight = typingContainer.clientHeight;
                     const lineTop = lineContainer.offsetTop;
                     const lineHeight = lineContainer.offsetHeight;
+                    const lineBottom = lineTop + lineHeight;
+                    const containerBottom = containerTop + containerHeight;
                     
-                    if (isPortrait && isMobile) {
-                        // 移动端竖屏：滚动到使当前行位于容器顶部
+                    // 如果当前行在视野下方，向下滚动
+                    if (lineBottom > containerBottom - 50) {
                         typingContainer.scrollTo({
-                            top: lineTop - 20,
+                            top: lineTop - containerHeight / 2 + lineHeight,
                             behavior: 'smooth'
                         });
-                    } else {
-                        // 电脑端和横屏：智能滚动，保持当前行在视野中
-                        const lineBottom = lineTop + lineHeight;
-                        const containerBottom = containerTop + containerHeight;
-                        
-                        // 如果当前行在视野下方，向下滚动
-                        if (lineBottom > containerBottom - 50) {
-                            typingContainer.scrollTo({
-                                top: lineTop - containerHeight / 2 + lineHeight,
-                                behavior: 'smooth'
-                            });
-                        }
-                        // 如果当前行在视野上方，向上滚动
-                        else if (lineTop < containerTop + 50) {
-                            typingContainer.scrollTo({
-                                top: lineTop - 50,
-                                behavior: 'smooth'
-                            });
-                        }
+                    }
+                    // 如果当前行在视野上方，向上滚动
+                    else if (lineTop < containerTop + 50) {
+                        typingContainer.scrollTo({
+                            top: lineTop - 50,
+                            behavior: 'smooth'
+                        });
                     }
                 }
             });
         }
         
-        // ========== 输入处理 ==========
+        // ========== 输入处理（修改版：支持中文跨行输入）==========
         function handleLineInput(e, lineIndex) {
             if (isComposing && inputMode === 'chinese') {
                 return;
@@ -1498,28 +950,61 @@
             }
             const input = e.target;
             const value = input.value;
-            inputValues[lineIndex] = value;
+            const currentLine = articleLines[lineIndex];
+            
+            // 启动计时器
             if (!startTime && value.length > 0) {
                 startTimer();
             }
-            updateLineCharacters(lineIndex, value);
-            updateStats();
-            updateProgress();
-            if (value.length === articleLines[lineIndex].length) {
+            
+            // 如果输入超过当前行长度（中文模式支持跨行）
+            if (value.length > currentLine.length) {
+                // 保留当前行的部分
+                const currentLineText = value.substring(0, currentLine.length);
+                inputValues[lineIndex] = currentLineText;
+                updateLineCharacters(lineIndex, currentLineText);
+                
+                // 如果还有下一行，将多余的部分传递到下一行
                 if (lineIndex < articleLines.length - 1) {
-                    // 直接切换到下一行，无延迟
+                    const overflow = value.substring(currentLine.length);
+                    const nextInput = document.getElementById(`input-line-${lineIndex + 1}`);
+                    if (nextInput) {
+                        // 设置下一行的值并触发输入事件
+                        nextInput.value = overflow;
+                        inputValues[lineIndex + 1] = overflow;
+                        updateLineCharacters(lineIndex + 1, overflow);
+                        
+                        // 自动聚焦到下一行
+                        nextInput.focus();
+                        handleInputFocus({ target: nextInput }, lineIndex + 1);
+                        
+                        // 递归处理，以防下一行也溢出
+                        if (overflow.length >= articleLines[lineIndex + 1].length) {
+                            handleLineInput({ target: nextInput }, lineIndex + 1);
+                        }
+                    }
+                }
+                // 更新当前输入框的值为当前行长度
+                input.value = currentLineText;
+            } else {
+                // 正常情况：输入未超过当前行
+                inputValues[lineIndex] = value;
+                updateLineCharacters(lineIndex, value);
+                
+                // 如果输入达到当前行长度，自动跳转到下一行
+                if (value.length === currentLine.length && lineIndex < articleLines.length - 1) {
                     const nextInput = document.getElementById(`input-line-${lineIndex + 1}`);
                     if (nextInput && !isManuallyPaused) {
                         nextInput.focus();
-                        hasInputFocus = true;
-                        // 自动滚动到下一行
                         handleInputFocus({ target: nextInput }, lineIndex + 1);
                     }
-                } else {
-                    checkCompletion();
                 }
             }
+            
+            updateStats();
+            checkCompletion();
         }
+        
         function handleKeyDown(e, lineIndex) {
             if (isManuallyPaused) {
                 e.preventDefault();
@@ -1528,12 +1013,9 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 if (lineIndex < articleLines.length - 1) {
-                    // 直接切换到下一行，无延迟
                     const nextInput = document.getElementById(`input-line-${lineIndex + 1}`);
                     if (nextInput) {
                         nextInput.focus();
-                        hasInputFocus = true;
-                        // 自动滚动到下一行
                         handleInputFocus({ target: nextInput }, lineIndex + 1);
                     }
                 }
@@ -1542,34 +1024,35 @@
                 const prevInput = document.getElementById(`input-line-${lineIndex - 1}`);
                 prevInput.focus();
                 prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
-                hasInputFocus = true;
             }
         }
+        
         function updateLineCharacters(lineIndex, inputValue) {
             const line = articleLines[lineIndex];
             for (let i = 0; i < line.length; i++) {
                 const charSpan = document.getElementById(`char-${lineIndex}-${i}`);
-                charSpan.classList.remove('correct', 'incorrect', 'current');
-                if (i < inputValue.length) {
-                    if (inputValue[i] === line[i]) {
-                        charSpan.classList.add('correct');
-                    } else {
-                        charSpan.classList.add('incorrect');
+                if (charSpan) {
+                    charSpan.classList.remove('correct', 'incorrect', 'current');
+                    if (i < inputValue.length) {
+                        if (inputValue[i] === line[i]) {
+                            charSpan.classList.add('correct');
+                        } else {
+                            charSpan.classList.add('incorrect');
+                        }
+                    } else if (i === inputValue.length) {
+                        charSpan.classList.add('current');
                     }
-                } else if (i === inputValue.length) {
-                    charSpan.classList.add('current');
                 }
             }
         }
+        
         function checkCompletion() {
             let totalTyped = inputValues.join('');
             if (totalTyped.length >= processedArticle.length) {
                 endPractice(false);
             }
         }
-        function handleInputBlur() {
-            hasInputFocus = false;
-        }
+        
         // ========== 计时器功能 ==========
         function startTimer() {
             startTime = Date.now();
@@ -1584,29 +1067,23 @@
                 updateSpeedRealtime();
             }, 100);
         }
-        // CHANGED: 速度 = "应计入字数" × 60 ÷ 用时（秒）
+        
         function updateSpeedRealtime() {
             if (!startTime) return;
             const elapsedSeconds = (Date.now() - startTime) / 1000;
-            const typed = countTypedChars(); // NEW: 包含中文标点
+            const typed = countTypedChars();
             const cpm = elapsedSeconds > 0 ? Math.round(typed * 60 / elapsedSeconds) : 0;
             document.getElementById('speed').textContent = cpm;
-            document.getElementById('mobileSpeed').textContent = cpm;
-            
-            // 更新竖屏速度显示
-            const mobileSpeedDisplay = document.getElementById('mobileSpeedDisplay');
-            if (mobileSpeedDisplay) {
-                mobileSpeedDisplay.textContent = cpm;
-            }
         }
+        
         function updateTimer() {
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
             const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('timer').textContent = timeStr;
-            document.getElementById('mobileTimer').textContent = timeStr;
         }
+        
         function stopTimer() {
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -1617,6 +1094,7 @@
                 timeLimitInterval = null;
             }
         }
+        
         // ========== 统计更新 ==========
         function updateStats() {
             correctCount = 0;
@@ -1635,27 +1113,19 @@
             });
             document.getElementById('correctChars').textContent = correctCount;
 
-            // CHANGED: 速度用"应计入字数"（中文包含标点）
             if (startTime) {
                 const elapsedSeconds = (Date.now() - startTime) / 1000;
                 const typedForSpeed = countTypedChars();
                 const cpm = elapsedSeconds > 0 ? Math.round(typedForSpeed * 60 / elapsedSeconds) : 0;
                 document.getElementById('speed').textContent = cpm;
-                document.getElementById('mobileSpeed').textContent = cpm;
-                
-                // 更新竖屏速度显示
-                const mobileSpeedDisplay = document.getElementById('mobileSpeedDisplay');
-                if (mobileSpeedDisplay) {
-                    mobileSpeedDisplay.textContent = cpm;
-                }
             }
 
             if (totalTypedForAccuracy > 0) {
                 const accuracy = Math.round((correctCount / totalTypedForAccuracy) * 100);
                 document.getElementById('accuracy').textContent = accuracy;
-                document.getElementById('mobileAccuracy').textContent = accuracy;
             }
         }
+        
         // ========== 练习控制 ==========
         function resetPractice() {
             stopTimer();
@@ -1666,56 +1136,27 @@
             errorCount = 0;
             timeElapsed = 0;
             currentLineIndex = 0;
-            hasInputFocus = false;
             document.getElementById('speed').textContent = '0';
-            document.getElementById('mobileSpeed').textContent = '0';
             document.getElementById('accuracy').textContent = '100';
-            document.getElementById('mobileAccuracy').textContent = '100';
             document.getElementById('timer').textContent = '00:00';
-            document.getElementById('mobileTimer').textContent = '00:00';
             document.getElementById('correctChars').textContent = '0';
             document.getElementById('pauseBtn').textContent = '暂停';
             document.getElementById('pauseBtn').classList.remove('paused');
-            
-            // 重置竖屏显示
-            const mobileSpeedDisplay = document.getElementById('mobileSpeedDisplay');
-            if (mobileSpeedDisplay) {
-                mobileSpeedDisplay.textContent = '0';
-            }
-            const mobilePauseBtn = document.getElementById('mobilePauseBtn');
-            if (mobilePauseBtn) {
-                mobilePauseBtn.textContent = '暂停';
-            }
             
             enableInputs();
             if (timeLimit) {
                 updateTimeRemaining();
             }
             renderLines();
-            updateProgress();
-            
-            // 收起键盘
-            const activeElement = document.activeElement;
-            if (activeElement && activeElement.classList.contains('input-line')) {
-                activeElement.blur();
-            }
         }
+        
         function endPractice(isTimeUp) {
             stopTimer();
-            hasInputFocus = false;
-            
-            // 收起键盘
-            const activeElement = document.activeElement;
-            if (activeElement && activeElement.classList.contains('input-line')) {
-                activeElement.blur();
-            }
             
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-            // CHANGED: 最终速度同样按"应计入字数"
-            const totalTyped = countTypedChars(); // NEW: 中文包含标点
+            const totalTyped = countTypedChars();
             const finalCPM = elapsedSeconds > 0 ? Math.round(totalTyped * 60 / elapsedSeconds) : 0;
 
-            // 准确率仍按"已对位比较过的字符数"计算
             let comparedChars = 0;
             inputValues.forEach((value, lineIndex) => {
                 const line = articleLines[lineIndex];
@@ -1735,6 +1176,7 @@
             }
             showResultModal();
         }
+        
         // ========== 模态框控制 ==========
         function showResultModal() {
             document.getElementById('modalOverlay').classList.add('show');
